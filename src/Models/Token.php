@@ -33,7 +33,7 @@ class Token extends Model
             ->first();
     }
 
-    public function findActiveAccessToken(): ?Token
+    public static function findActiveAccessToken(): ?Token
     {
         return static::query()
             ->where('token_type', TokenType::Access)
@@ -65,5 +65,14 @@ class Token extends Model
                 'expires_at' => now()->addSeconds($expiresIn),
             ]);
         });
+    }
+
+    public function isValid(?Carbon $validAt = null): bool
+    {
+        if ($this->expires_at === null) {
+            return true;
+        }
+
+        return $this->expires_at->isAfter($validAt ?? Carbon::now());
     }
 }

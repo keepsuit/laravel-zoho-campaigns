@@ -22,4 +22,16 @@ enum ZohoRegion: string
             self::China => 'China',
         };
     }
+
+    public function domain(): string
+    {
+        return match ($this) {
+            ZohoRegion::Europe => 'zoho.eu',
+            ZohoRegion::Australia => 'zoho.com.au',
+            ZohoRegion::India => 'zoho.in',
+            ZohoRegion::Japan => 'zoho.jp',
+            ZohoRegion::China => 'zoho.com.cn',
+            ZohoRegion::UnitedStates => 'zoho.com',
+        };
+    }
 }

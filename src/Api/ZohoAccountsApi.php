@@ -4,12 +4,12 @@ namespace Keepsuit\Campaigns\Api;
 
 use Illuminate\Support\Facades\Http;
 
-class ZohoApi
+class ZohoAccountsApi
 {
     public function __construct(
         protected string $clientId,
         protected string $clientSecret,
-        protected ?string $region = null
+        protected ZohoRegion $region,
     ) {
     }
 
@@ -31,9 +31,8 @@ class ZohoApi
             'code' => $authorizationCode,
         ]);
 
-        $response = Http::post(sprintf('%s/token?%s', $this->getAccountsEndpoint(), $params));
-
-        return $response->json();
+        return Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+            ->json();
     }
 
     /**
@@ -53,25 +52,12 @@ class ZohoApi
             'refresh_token' => $refreshToken,
         ]);
 
-        $response = Http::post(sprintf('%s/token?%s', $this->getAccountsEndpoint(), $params));
-
-        return $response->json();
+        return Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+            ->json();
     }
 
-    protected function domain(): string
+    protected function endpoint(): string
     {
-        return match ($this->region) {
-            ZohoRegion::Europe->value => 'zoho.eu',
-            ZohoRegion::Australia->value => 'zoho.com.au',
-            ZohoRegion::India->value => 'zoho.in',
-            ZohoRegion::Japan->value => 'zoho.jp',
-            ZohoRegion::China->value => 'zoho.com.cn',
-            default => 'zoho.com',
-        };
-    }
-
-    protected function getAccountsEndpoint(): string
-    {
-        return sprintf('https://accounts.%s/oauth/v2', $this->domain());
+        return sprintf('https://accounts.%s/oauth/v2', $this->region->domain());
     }
 }

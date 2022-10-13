@@ -4,7 +4,7 @@ namespace Keepsuit\Campaigns\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Keepsuit\Campaigns\Api\ZohoApi;
+use Keepsuit\Campaigns\Api\ZohoAccountsApi;
 use Keepsuit\Campaigns\Api\ZohoRegion;
 use Keepsuit\Campaigns\Models\Token;
 
@@ -44,9 +44,9 @@ class SetupCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function getZohoApiClient(): ZohoApi
+    protected function getZohoApiClient(): ZohoAccountsApi
     {
-        return app(ZohoApi::class);
+        return app(ZohoAccountsApi::class);
     }
 
     /**
