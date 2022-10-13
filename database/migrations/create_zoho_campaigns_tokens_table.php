@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('laravel_zoho_campaigns_table', function (Blueprint $table) {
+        Schema::create('zoho_campaigns_tokens', function (Blueprint $table) {
             $table->id();
-
-            // add fields
-
+            $table->text('token');
+            $table->string('token_type')->index();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
