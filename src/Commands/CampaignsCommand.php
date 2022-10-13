@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Keepsuit\Campaigns\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class CampaignsCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-zoho-campaigns';
 
     public $description = 'My command';
 

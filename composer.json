@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "keepsuit/laravel-zoho-campaigns",
+    "description": "Manage Zoho Campaigns from Laravel",
     "keywords": [
-        ":vendor_name",
+        "keepsuit",
         "laravel",
-        ":package_slug"
+        "laravel-zoho-campaigns"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/keepsuit/laravel-zoho-campaigns",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Fabio Capucci",
+            "email": "f.capucci@keepsuit.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Keepsuit\\Campaigns\\": "src",
+            "Keepsuit\\Campaigns\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Keepsuit\\Campaigns\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -61,10 +61,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Keepsuit\\Campaigns\\CampaignsServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Campaigns": "Keepsuit\\Campaigns\\Facades\\Campaigns"
             }
         }
     },
