@@ -31,10 +31,10 @@ class CampaignsServiceProvider extends PackageServiceProvider
     {
         $this->app->singleton(ZohoAccessToken::class);
 
-        $this->app->bind(ZohoAccountsApi::class, function (Application $app) {
+        $this->app->bind(ZohoAccountsApi::class, function () {
             return new ZohoAccountsApi(
-                config('campaigns.client_id'),
-                config('campaigns.client_secret'),
+                config('campaigns.client_id', ''),
+                config('campaigns.client_secret', ''),
                 ZohoRegion::tryFrom(config('campaigns.region')) ?? ZohoRegion::UnitedStates,
             );
         });
@@ -44,6 +44,16 @@ class CampaignsServiceProvider extends PackageServiceProvider
                 ZohoRegion::tryFrom(config('campaigns.region')) ?? ZohoRegion::UnitedStates,
                 $app->make(ZohoAccessToken::class)
             );
+        });
+
+        $this->app->scoped(Campaigns::class, function (Application $app) {
+            $driver = config('campaigns.driver', 'api');
+
+            return match ($driver) {
+                'null' => new NullDriver(false),
+                'log' => new NullDriver(true),
+                default => new Campaigns($app->make(ZohoCampaignsApi::class)),
+            };
         });
     }
 }

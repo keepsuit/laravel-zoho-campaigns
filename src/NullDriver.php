@@ -1,0 +1,19 @@
+<?php
+
+namespace Keepsuit\Campaigns;
+
+use Illuminate\Support\Facades\Log;
+
+class NullDriver
+{
+    public function __construct(protected bool $logCalls = false)
+    {
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        if ($this->logCalls) {
+            Log::debug(sprintf('Called Campaigns::%s', $name), $arguments);
+        }
+    }
+}

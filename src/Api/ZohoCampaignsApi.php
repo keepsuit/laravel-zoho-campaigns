@@ -16,7 +16,7 @@ class ZohoCampaignsApi
      * @return array{
      *     message: string,
      *     status: string,
-     *     code: int, // 0 = success
+     *     code: int,
      * }
      */
     public function listSubscribe(string $listKey, string $email, array $contactInfo = []): array
@@ -38,6 +38,13 @@ class ZohoCampaignsApi
             ->json();
     }
 
+    /**
+     * @return array{
+     *     message: string,
+     *     status: string,
+     *     code: int,
+     * }
+     */
     public function listUnsubscribe(string $listKey, string $email): array
     {
         $params = [
