@@ -28,10 +28,10 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('app.key', 'base64:GCQcZ6SU+ngsW8LV1yFPvVzQ4bvCoC2RGQXBcmAvVP8=');
-
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-zoho-campaigns_table.php.stub';
-        $migration->up();
-        */
+        config()->set('campaigns.lists', [
+            'subscribers' => [
+                'listKey' => 'subscribers-list-key',
+            ],
+        ]);
     }
 }

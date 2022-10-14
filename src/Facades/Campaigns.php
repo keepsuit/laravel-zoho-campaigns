@@ -5,7 +5,8 @@ namespace Keepsuit\Campaigns\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method array subscribe(string $email, ?array $contactInfo, string $listName = null)
+ * @method static array subscribe(string $email, ?array $contactInfo = [], string $listName = null)
+ * @method static array unsubscribe(string $email, string $listName = null)
  *
  * @see \Keepsuit\Campaigns\Campaigns
  */
