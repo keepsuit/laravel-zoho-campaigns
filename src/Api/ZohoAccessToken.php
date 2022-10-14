@@ -23,7 +23,7 @@ class ZohoAccessToken
         }
 
         if ($this->accessToken === null) {
-            throw new \Error('Zoho Access Token not found');
+            return '';
         }
 
         if (! $this->accessToken->isValid(now()->addMinute())) {
@@ -40,13 +40,15 @@ class ZohoAccessToken
         }
 
         if ($this->refreshToken === null) {
-            throw new \Error('Zoho Refresh Token not found');
+            return null;
         }
 
         $response = $this->accountsApi->refreshAccessToken($this->refreshToken->token);
 
+        ray($response);
+
         if (Arr::get($response, 'access_token') === null) {
-            throw new \Error('Cannot refresh Zoho Access Token');
+            return null;
         }
 
         return Token::saveAccessToken($response['access_token'], $response['expires_in']);
