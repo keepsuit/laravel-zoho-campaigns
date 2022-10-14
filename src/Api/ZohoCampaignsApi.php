@@ -12,27 +12,53 @@ class ZohoCampaignsApi
     ) {
     }
 
-    public function campaignsListSubscribe(string $email, array $contactInfo = [], ?string $listKey = null): array
+    /**
+     * @return array{
+     *     message: string,
+     *     status: string,
+     *     code: int, // 0 = success
+     * }
+     */
+    public function listSubscribe(string $listKey, string $email, array $contactInfo = []): array
     {
-        $params = http_build_query([
+        $params = [
             'listkey' => $listKey,
             'resfmt' => 'JSON',
             'contactinfo' => json_encode(array_merge([
                 'Contact Email' => $email,
             ], $contactInfo)),
-        ]);
+        ];
 
         return Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
             ->withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ])
-            ->post(sprintf('/json/listsubscribe?%s', $params))
+            ->post(sprintf('/json/listsubscribe?%s', http_build_query($params)))
+            ->json();
+    }
+
+    public function listUnsubscribe(string $listKey, string $email): array
+    {
+        $params = [
+            'listkey' => $listKey,
+            'resfmt' => 'JSON',
+            'contactinfo' => json_encode([
+                'Contact Email' => $email,
+            ]),
+        ];
+
+        return Http::baseUrl($this->endpoint())
+            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
+            ->withHeaders([
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ])
+            ->post(sprintf('/json/listunsubscribe?%s', http_build_query($params)))
             ->json();
     }
 
     protected function endpoint(): string
     {
-        return sprintf('https://campaigns.%s/api/v1', $this->region->domain());
+        return sprintf('https://campaigns.%s/api/v1.1', $this->region->domain());
     }
 }

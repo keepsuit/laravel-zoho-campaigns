@@ -45,8 +45,6 @@ class ZohoAccessToken
 
         $response = $this->accountsApi->refreshAccessToken($this->refreshToken->token);
 
-        ray($response);
-
         if (Arr::get($response, 'access_token') === null) {
             return null;
         }

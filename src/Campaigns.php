@@ -18,7 +18,7 @@ class Campaigns
     {
         $listKey = $this->resolveListKey($listName);
 
-        $response = $this->zohoApi->campaignsListSubscribe($email, $contactInfo, $listKey);
+        $response = $this->zohoApi->listSubscribe($email, $contactInfo, $listKey);
 
         return [
             'success' => Arr::get($response, 'status') === 'success',
