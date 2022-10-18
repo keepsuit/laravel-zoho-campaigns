@@ -3,6 +3,7 @@
 namespace Keepsuit\Campaigns\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Keepsuit\Campaigns\Api\ZohoAccountsApi;
 use Keepsuit\Campaigns\Api\ZohoRegion;
@@ -29,6 +30,12 @@ class SetupCommand extends Command
         $this->components->info('Generating token...');
 
         $response = $this->getZohoApiClient()->generateAccessToken($authorizationCode);
+
+        if (Arr::get($response, 'access_token') === null) {
+            $this->components->error('An error occurred while generating the token. Please try again.');
+
+            return self::FAILURE;
+        }
 
         DB::transaction(function () use ($response) {
             Token::saveAccessToken($response['access_token'], $response['expires_in']);
@@ -87,7 +94,7 @@ class SetupCommand extends Command
     {
         $region = config('campaigns.region');
 
-        if ($region !== null) {
+        if (ZohoRegion::tryFrom($region) !== null) {
             return $region;
         }
 
@@ -99,7 +106,7 @@ class SetupCommand extends Command
             $this->choice('Select your region', $options->keys()->toArray())
         );
 
-        config('campaigns.region', $region->value);
+        config()->set('campaigns.region', $region->value);
 
         return $region->value;
     }
@@ -119,6 +126,6 @@ class SetupCommand extends Command
             'Click "Generate Code" button, select the campaigns account you want to connect and paste here the generated code',
         ]);
 
-        return $this->ask('Code');
+        return $this->secret('Code');
     }
 }

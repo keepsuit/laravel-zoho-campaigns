@@ -33,8 +33,8 @@ class CampaignsServiceProvider extends PackageServiceProvider
 
         $this->app->bind(ZohoAccountsApi::class, function () {
             return new ZohoAccountsApi(
-                config('campaigns.client_id', ''),
-                config('campaigns.client_secret', ''),
+                config('campaigns.client_id') ?? '',
+                config('campaigns.client_secret') ?? '',
                 ZohoRegion::tryFrom(config('campaigns.region')) ?? ZohoRegion::UnitedStates,
             );
         });
