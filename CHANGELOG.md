@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v0.1.2 - 2023-01-24
+
+- Support Laravel 10
+
 ## v0.1.1 - 2022-10-18
 
 - Fix AccountsApi instance creation when client id/secret are not set
