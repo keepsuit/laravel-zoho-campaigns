@@ -1,8 +1,8 @@
 # Manage Zoho Campaigns from Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/keepsuit/laravel-zoho-campaigns.svg?style=flat-square)](https://packagist.org/packages/keepsuit/laravel-zoho-campaigns)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/keepsuit/laravel-zoho-campaigns/run-tests?label=tests)](https://github.com/keepsuit/laravel-zoho-campaigns/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/keepsuit/laravel-zoho-campaigns/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/keepsuit/laravel-zoho-campaigns/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/keepsuit/laravel-zoho-campaigns/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/keepsuit/laravel-zoho-campaigns/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/keepsuit/laravel-zoho-campaigns/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/keepsuit/laravel-zoho-campaigns/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/keepsuit/laravel-zoho-campaigns.svg?style=flat-square)](https://packagist.org/packages/keepsuit/laravel-zoho-campaigns)
 
 This package provides an easy way to interact with the Zoho Campaigns API.
