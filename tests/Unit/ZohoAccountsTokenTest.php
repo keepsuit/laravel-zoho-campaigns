@@ -8,7 +8,7 @@ use Keepsuit\Campaigns\Database\Factories\TokenFactory;
 uses(RefreshDatabase::class);
 
 it('get active access token', function () {
-    $accountsApi = mock(ZohoAccountsApi::class)->expect();
+    $accountsApi = mock(ZohoAccountsApi::class);
 
     $zohoAccessToken = new ZohoAccessToken($accountsApi);
 
@@ -20,12 +20,11 @@ it('get active access token', function () {
 });
 
 it('refresh access token if expired', function () {
-    $accountsApi = mock(ZohoAccountsApi::class)->expect(
-        refreshAccessToken: fn () => [
-            'access_token' => 'access-token-2',
-            'expires_in' => 3600,
-        ],
-    );
+    $accountsApi = mock(ZohoAccountsApi::class);
+    $accountsApi->shouldReceive('refreshAccessToken')->andReturn([
+        'access_token' => 'access-token-2',
+        'expires_in' => 3600,
+    ]);
 
     $zohoAccessToken = new ZohoAccessToken($accountsApi);
 
@@ -37,12 +36,11 @@ it('refresh access token if expired', function () {
 });
 
 it('refresh access token if it will expire within a minute', function () {
-    $accountsApi = mock(ZohoAccountsApi::class)->expect(
-        refreshAccessToken: fn () => [
-            'access_token' => 'access-token-2',
-            'expires_in' => 3600,
-        ],
-    );
+    $accountsApi = mock(ZohoAccountsApi::class);
+    $accountsApi->shouldReceive('refreshAccessToken')->andReturn([
+        'access_token' => 'access-token-2',
+        'expires_in' => 3600,
+    ]);
 
     $zohoAccessToken = new ZohoAccessToken($accountsApi);
 
@@ -54,7 +52,7 @@ it('refresh access token if it will expire within a minute', function () {
 });
 
 it('return empty token if no active access token', function () {
-    $accountsApi = mock(ZohoAccountsApi::class)->expect();
+    $accountsApi = mock(ZohoAccountsApi::class);
 
     $zohoAccessToken = new ZohoAccessToken($accountsApi);
 
@@ -63,11 +61,10 @@ it('return empty token if no active access token', function () {
 });
 
 it('return empty token if refresh fails', function () {
-    $accountsApi = mock(ZohoAccountsApi::class)->expect(
-        refreshAccessToken: fn () => [
-            'error' => 'invalid_client',
-        ],
-    );
+    $accountsApi = mock(ZohoAccountsApi::class);
+    $accountsApi->shouldReceive('refreshAccessToken')->andReturn([
+        'error' => 'invalid_client',
+    ]);
 
     $zohoAccessToken = new ZohoAccessToken($accountsApi);
 

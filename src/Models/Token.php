@@ -67,7 +67,7 @@ class Token extends Model
         });
     }
 
-    public function isValid(?Carbon $validAt = null): bool
+    public function isValid(Carbon $validAt = null): bool
     {
         if ($this->expires_at === null) {
             return true;

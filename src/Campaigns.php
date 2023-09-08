@@ -51,7 +51,7 @@ class Campaigns
         ];
     }
 
-    protected function resolveListKey(?string $listName = null): string
+    protected function resolveListKey(string $listName = null): string
     {
         $listName = $listName ?? $this->defaultListName;
 

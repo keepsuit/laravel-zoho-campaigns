@@ -111,9 +111,6 @@ class SetupCommand extends Command
         return $region->value;
     }
 
-    /**
-     * @return mixed
-     */
     protected function getAuthorizationCode(): mixed
     {
         $this->components->info('Generate Zoho api token for campaigns.');

@@ -7,9 +7,8 @@ use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 use Keepsuit\Campaigns\Api\ZohoRegion;
 
 beforeEach(function () {
-    $accessToken = mock(ZohoAccessToken::class)->expect(
-        get: fn () => 'access-token'
-    );
+    $accessToken = mock(ZohoAccessToken::class);
+    $accessToken->shouldReceive('get')->andReturn('access-token');
 
     $this->campaignsApi = new ZohoCampaignsApi(ZohoRegion::Europe, $accessToken);
 });
