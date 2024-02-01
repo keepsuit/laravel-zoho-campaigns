@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Keepsuit\Campaigns\Models\Token;
 use Keepsuit\Campaigns\Models\TokenType;
 
+/**
+ * @extends Factory<Token>
+ */
 class TokenFactory extends Factory
 {
     protected $model = Token::class;

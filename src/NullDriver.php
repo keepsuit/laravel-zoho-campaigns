@@ -10,7 +10,7 @@ class NullDriver
     {
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): void
     {
         if ($this->logCalls) {
             Log::debug(sprintf('Called Campaigns::%s', $name), $arguments);
