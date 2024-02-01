@@ -21,13 +21,12 @@ class CampaignsServiceProvider extends PackageServiceProvider
             ->hasMigrations([
                 'create_zoho_campaigns_tokens_table',
             ])
-            ->runsMigrations()
             ->hasCommands([
                 SetupCommand::class,
             ]);
     }
 
-    public function registeringPackage()
+    public function registeringPackage(): void
     {
         $this->app->singleton(ZohoAccessToken::class);
 

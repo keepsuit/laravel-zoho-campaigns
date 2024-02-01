@@ -3,6 +3,9 @@
 namespace Keepsuit\Campaigns\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 use Keepsuit\Campaigns\CampaignsServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -15,6 +18,8 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Keepsuit\\Campaigns\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        $this->setUpDatabase($this->app);
     }
 
     protected function getPackageProviders($app): array
@@ -33,5 +38,14 @@ class TestCase extends Orchestra
                 'listKey' => 'subscribers-list-key',
             ],
         ]);
+    }
+
+    protected function setUpDatabase(?Application $app): void
+    {
+        Schema::dropAllTables();
+
+        $migration = include __DIR__.'/../database/migrations/create_zoho_campaigns_tokens_table.php.stub';
+
+        $migration->up();
     }
 }
