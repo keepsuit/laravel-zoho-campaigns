@@ -7,12 +7,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property int         $id
- * @property string      $token
- * @property TokenType   $token_type
+ * @property int $id
+ * @property string $token
+ * @property TokenType $token_type
  * @property Carbon|null $expires_at
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Token extends Model
 {
@@ -67,7 +67,7 @@ class Token extends Model
         });
     }
 
-    public function isValid(Carbon $validAt = null): bool
+    public function isValid(?Carbon $validAt = null): bool
     {
         if ($this->expires_at === null) {
             return true;

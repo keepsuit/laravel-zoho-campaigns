@@ -24,7 +24,7 @@ class Campaigns
     /**
      * @return array{success: bool, message?: string}
      */
-    public function subscribe(string $email, ?array $contactInfo = [], string $listName = null): array
+    public function subscribe(string $email, ?array $contactInfo = [], ?string $listName = null): array
     {
         $listKey = $this->resolveListKey($listName);
 
@@ -39,7 +39,7 @@ class Campaigns
     /**
      * @return array{success: bool, message?: string}
      */
-    public function unsubscribe(string $email, string $listName = null): array
+    public function unsubscribe(string $email, ?string $listName = null): array
     {
         $listKey = $this->resolveListKey($listName);
 
@@ -51,7 +51,7 @@ class Campaigns
         ];
     }
 
-    protected function resolveListKey(string $listName = null): string
+    protected function resolveListKey(?string $listName = null): string
     {
         $listName = $listName ?? $this->defaultListName;
 
