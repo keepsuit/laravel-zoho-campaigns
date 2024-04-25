@@ -3,8 +3,6 @@
 namespace Keepsuit\Campaigns\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Schema;
 use Keepsuit\Campaigns\CampaignsServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
