@@ -2,6 +2,17 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v0.2.1 - 2024-04-25
+
+### What's Changed
+
+* Support laravel 11
+* Bump ramsey/composer-install from 2 to 3 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/15
+* Bump dependabot/fetch-metadata from 1.6.0 to 2.0.0 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/16
+* Bump aglipanci/laravel-pint-action from 2.3.1 to 2.4 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/17
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/0.2.0...0.2.1
+
 ## v0.2.0 - 2024-02-01
 
 ### What's Changed
