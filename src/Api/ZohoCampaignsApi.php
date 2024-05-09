@@ -19,16 +19,16 @@ class ZohoCampaignsApi
      *     code: int,
      * }
      */
-    public function listSubscribe(string $listKey, string $email, array $contactInfo = []): array
+    public function listSubscribe(string $listKey, string $email, array $contactInfo = [], array $additionalParams = []): array
     {
-        $params = [
+        $params = array_merge([
             'listkey' => $listKey,
             'resfmt' => 'JSON',
             'contactinfo' => json_encode(array_merge([
                 'Contact Email' => $email,
             ], $contactInfo)),
-        ];
-
+        ], $additionalParams);
+    
         return Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
             ->withHeaders([
