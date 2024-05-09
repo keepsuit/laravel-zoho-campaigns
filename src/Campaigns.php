@@ -51,6 +51,25 @@ class Campaigns
         ];
     }
 
+
+    /**
+     * @return array{success: bool, message?: string}
+     */
+    public function resubscribe(string $email, ?array $contactInfo = [], string $listName = null): array
+    {
+        $listKey = $this->resolveListKey($listName);
+
+        $additionalParams = ['donotmail_resub' => true];
+
+        $response = $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
+
+        return [
+            'success' => Arr::get($response, 'status') === 'success',
+            'message' => Arr::get($response, 'message'),
+        ];
+    }
+
+
     protected function resolveListKey(?string $listName = null): string
     {
         $listName = $listName ?? $this->defaultListName;
