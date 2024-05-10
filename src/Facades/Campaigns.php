@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array|null subscribe(string $email, ?array $contactInfo = [], string $listName = null)
+ * @method static array|null resubscribe(string $email, ?array $contactInfo = [], string $listName = null)
  * @method static array|null unsubscribe(string $email, string $listName = null)
  *
  * @see \Keepsuit\Campaigns\Campaigns
