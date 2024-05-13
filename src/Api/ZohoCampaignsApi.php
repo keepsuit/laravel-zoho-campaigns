@@ -29,7 +29,7 @@ class ZohoCampaignsApi
             ], $contactInfo)),
         ], $additionalParams);
         
-        dump(params);
+        dump($params);
 
         return Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
