@@ -59,7 +59,7 @@ class Campaigns
     {
         $listKey = $this->resolveListKey($listName);
 
-        $additionalParams = ['donotmail_resub' => true];
+        $additionalParams = ['donotmail_resub' => 'true'];
 
         $response = $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
 
