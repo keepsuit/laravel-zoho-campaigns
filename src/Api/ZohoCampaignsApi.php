@@ -28,7 +28,9 @@ class ZohoCampaignsApi
                 'Contact Email' => $email,
             ], $contactInfo)),
         ], $additionalParams);
-    
+        
+        dump(params);
+
         return Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
             ->withHeaders([
