@@ -69,6 +69,24 @@ class Campaigns
         ];
     }
 
+    /**
+     * Retrieves subscribers for a given list name.
+     *
+     * @param string|null $listName The name of the list. If null, the default list name will be used.
+     * @param array $options An array of options for the request. Possible keys include:
+     *     - 'sort': The sort order of the results. Possible values are 'asc' for ascending order and 'desc' for descending order.
+     *     - 'fromindex': The starting index for the results. This is a number.
+     *     - 'range': The range of results to retrieve. This is a number.
+     *     - 'status': The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'.
+     * @return array The list of subscribers.
+     */
+    public function getSubscribers(?string $listName = null, array $options = []): array
+    {
+        $listKey = $this->resolveListKey($listName);
+
+        return $this->zohoApi->getListSubscribers($listKey, $options);
+    }
+
 
     protected function resolveListKey(?string $listName = null): string
     {
