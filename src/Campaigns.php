@@ -88,6 +88,21 @@ class Campaigns
     }
 
 
+    /**
+     * Retrieves the count of subscribers for a given list name and status.
+     *
+     * @param string|null $listName The name of the list. If null, the default list name will be used.
+     * @param string $status The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
+     * @return int The count of subscribers.
+     */
+    public function countSubscribers(?string $listName = null, string $status = 'active'): int
+    {
+        $listKey = $this->resolveListKey($listName);
+
+        return $this->zohoApi->getListSubscribersCount($listKey, $status);
+    }
+
+
     protected function resolveListKey(?string $listName = null): string
     {
         $listName = $listName ?? $this->defaultListName;
