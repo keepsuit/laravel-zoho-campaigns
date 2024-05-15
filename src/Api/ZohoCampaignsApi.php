@@ -87,8 +87,10 @@ class ZohoCampaignsApi
             ->withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ])
-            ->get(sprintf('/json/getlistsubscribers?%s', http_build_query($params)))
+            ->get(sprintf('/getlistsubscribers?%s', http_build_query($params)))
             ->json();
+        
+        dump($response);
 
         return $response['list_of_details'] ?? [];
     }
@@ -114,9 +116,10 @@ class ZohoCampaignsApi
             ->withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ])
-            ->get(sprintf('/json/listsubscriberscount?%s', http_build_query($params)))
+            ->get(sprintf('/listsubscriberscount?%s', http_build_query($params)))
             ->json();
-
+        
+            dump($response);
         return $response['no_of_contacts'] ?? 0;
     }
 
