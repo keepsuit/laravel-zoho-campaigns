@@ -89,8 +89,6 @@ class ZohoCampaignsApi
             ])
             ->get(sprintf('/getlistsubscribers?%s', http_build_query($params)))
             ->json();
-        
-        dump($response);
 
         return $response['list_of_details'] ?? [];
     }
@@ -119,7 +117,6 @@ class ZohoCampaignsApi
             ->get(sprintf('/listsubscriberscount?%s', http_build_query($params)))
             ->json();
         
-            dump($response);
         return $response['no_of_contacts'] ?? 0;
     }
 
