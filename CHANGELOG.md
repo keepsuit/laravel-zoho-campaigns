@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v0.3.0 - 2024-05-22
+
+### What's Changed
+
+* Added `resubscribe`, `subscribers` and `subscribersCount` methods by @andreibaca in https://github.com/keepsuit/laravel-zoho-campaigns/pull/20
+* Throw `ZohoApiException` on api error by @cappuc in https://github.com/keepsuit/laravel-zoho-campaigns/pull/21
+* Bump dependabot/fetch-metadata from 2.0.0 to 2.1.0 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/18
+
+### New Contributors
+
+* @andreibaca made their first contribution in https://github.com/keepsuit/laravel-zoho-campaigns/pull/20
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/0.2.1...0.3.0
+
 ## v0.2.1 - 2024-04-25
 
 ### What's Changed
