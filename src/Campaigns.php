@@ -4,6 +4,7 @@ namespace Keepsuit\Campaigns;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 
 class Campaigns
@@ -51,11 +52,10 @@ class Campaigns
         ];
     }
 
-
     /**
      * @return array{success: bool, message?: string}
      */
-    public function resubscribe(string $email, ?array $contactInfo = [], string $listName = null): array
+    public function resubscribe(string $email, ?array $contactInfo = [], ?string $listName = null): array
     {
         $listKey = $this->resolveListKey($listName);
 
@@ -72,36 +72,55 @@ class Campaigns
     /**
      * Retrieves subscribers for a given list name.
      *
-     * @param string|null $listName The name of the list. If null, the default list name will be used.
-     * @param array $options An array of options for the request. Possible keys include:
-     *     - 'sort': The sort order of the results. Possible values are 'asc' for ascending order and 'desc' for descending order.
-     *     - 'fromindex': The starting index for the results. This is a number.
-     *     - 'range': The range of results to retrieve. This is a number.
-     *     - 'status': The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'.
-     * @return array The list of subscribers.
+     * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'. Default is 'active'
+     * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
+     * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
+     * @return LazyCollection<array-key, array{
+     *      zuid: string,
+     *      phone: string,
+     *      contact_email: string,
+     *      firstname: string,
+     *      lastname: string,
+     *      companyname: string,
+     *  }> The list of subscribers.
      */
-    public function getSubscribers(?string $listName = null, array $options = []): array
+    public function subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null): LazyCollection
     {
         $listKey = $this->resolveListKey($listName);
 
-        return $this->zohoApi->getListSubscribers($listKey, $options);
-    }
+        return LazyCollection::make(function () use ($status, $sort, $listKey) {
+            $fromIndex = 1;
+            $range = 20;
 
+            while (true) {
+                $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $range);
+
+                foreach ($response as $subscriber) {
+                    yield $subscriber;
+                }
+
+                if (count($response) < $range) {
+                    break;
+                }
+
+                $fromIndex += $range;
+            }
+        });
+    }
 
     /**
      * Retrieves the count of subscribers for a given list name and status.
      *
-     * @param string|null $listName The name of the list. If null, the default list name will be used.
-     * @param string $status The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
+     * @param  string  $status  The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
+     * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
      * @return int The count of subscribers.
      */
-    public function countSubscribers(?string $listName = null, string $status = 'active'): int
+    public function subscribersCount(string $status = 'active', ?string $listName = null): int
     {
         $listKey = $this->resolveListKey($listName);
 
-        return $this->zohoApi->getListSubscribersCount($listKey, $status);
+        return $this->zohoApi->listSubscribersCount($listKey, $status);
     }
-
 
     protected function resolveListKey(?string $listName = null): string
     {

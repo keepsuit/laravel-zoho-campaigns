@@ -3,6 +3,7 @@
 namespace Keepsuit\Campaigns\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Http;
 use Keepsuit\Campaigns\CampaignsServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -11,6 +12,8 @@ class TestCase extends Orchestra
     protected function setUp(): void
     {
         parent::setUp();
+
+        Http::preventStrayRequests();
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Keepsuit\\Campaigns\\Database\\Factories\\'.class_basename($modelName).'Factory'

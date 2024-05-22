@@ -45,15 +45,15 @@ class ZohoCampaignsApi
      *     code: int,
      * }
      */
-    public function listUnsubscribe(string $listKey, string $email): array
+    public function listUnsubscribe(string $listKey, string $email, array $additionalParams = []): array
     {
-        $params = [
+        $params = array_merge([
             'listkey' => $listKey,
             'resfmt' => 'JSON',
             'contactinfo' => json_encode([
                 'Contact Email' => $email,
             ]),
-        ];
+        ], $additionalParams);
 
         return Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
@@ -67,20 +67,36 @@ class ZohoCampaignsApi
     /**
      * Retrieves the list of subscribers for a given list key with various options.
      *
-     * @param string $listKey The list key.
-     * @param array $options An array of options for the request. Possible keys include:
-     *     - 'sort': The sort order of the results. Possible values are 'asc' for ascending order and 'desc' for descending order.
-     *     - 'fromindex': The starting index for the results. This is a number.
-     *     - 'range': The range of results to retrieve. This is a number.
-     *     - 'status': The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'.
-     * @return array The list of subscribers.
+     * @param  string  $listKey  The list key.
+     * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'. Default is 'active'
+     * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
+     * @param  int  $fromIndex  The starting index for the results. Default is 1.
+     * @param  int  $range  The range of results to retrieve. Default is 25.
+     * @return array<array-key, array{
+     *     zuid: string,
+     *     phone: string,
+     *     contact_email: string,
+     *     firstname: string,
+     *     lastname: string,
+     *     companyname: string,
+     * }> The list of subscribers.
      */
-    public function getListSubscribers(string $listKey, array $options = []): array
-    {
+    public function listSubscribers(
+        string $listKey,
+        string $status = 'active',
+        string $sort = 'asc',
+        int $fromIndex = 1,
+        int $range = 20,
+        array $additionalParams = []
+    ): array {
         $params = array_merge([
             'listkey' => $listKey,
             'resfmt' => 'JSON',
-        ], $options);
+            'fromindex' => $fromIndex,
+            'range' => $range,
+            'sort' => $sort,
+            'status' => $status,
+        ], $additionalParams);
 
         $response = Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
@@ -93,21 +109,23 @@ class ZohoCampaignsApi
         return $response['list_of_details'] ?? [];
     }
 
-
     /**
      * Retrieves the count of subscribers for a given list key and status.
      *
-     * @param string $listKey The list key.
-     * @param string $status The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
+     * @param  string  $listKey  The list key.
+     * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'unsub', 'bounce' and 'spam'. Default is 'active'
      * @return int The count of subscribers.
      */
-    public function getListSubscribersCount(string $listKey, string $status='active'): int
-    {
-        $params = [
+    public function listSubscribersCount(
+        string $listKey,
+        string $status = 'active',
+        array $additionalParams = []
+    ): int {
+        $params = array_merge([
             'listkey' => $listKey,
             'resfmt' => 'JSON',
             'status' => $status,
-        ];
+        ], $additionalParams);
 
         $response = Http::baseUrl($this->endpoint())
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
@@ -116,10 +134,9 @@ class ZohoCampaignsApi
             ])
             ->get(sprintf('/listsubscriberscount?%s', http_build_query($params)))
             ->json();
-        
+
         return $response['no_of_contacts'] ?? 0;
     }
-
 
     protected function endpoint(): string
     {
