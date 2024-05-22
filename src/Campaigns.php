@@ -28,11 +28,24 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribe(string $email, ?array $contactInfo = [], ?string $listName = null): string
+    public function subscribe(string $email, array $contactInfo = [], ?string $listName = null): string
     {
         $listKey = $this->resolveListKey($listName);
 
         return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo);
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws ZohoApiException
+     */
+    public function resubscribe(string $email, array $contactInfo = [], ?string $listName = null): string
+    {
+        $listKey = $this->resolveListKey($listName);
+
+        $additionalParams = ['donotmail_resub' => 'true'];
+
+        return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
     }
 
     /**
@@ -44,19 +57,6 @@ class Campaigns
         $listKey = $this->resolveListKey($listName);
 
         return $this->zohoApi->listUnsubscribe($listKey, $email);
-    }
-
-    /**
-     * @throws ConnectionException
-     * @throws ZohoApiException
-     */
-    public function resubscribe(string $email, ?array $contactInfo = [], ?string $listName = null): string
-    {
-        $listKey = $this->resolveListKey($listName);
-
-        $additionalParams = ['donotmail_resub' => 'true'];
-
-        return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
     }
 
     /**

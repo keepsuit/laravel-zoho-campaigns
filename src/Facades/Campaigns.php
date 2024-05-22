@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\LazyCollection;
 
 /**
- * @method static array|null subscribe(string $email, ?array $contactInfo = [], string $listName = null)
- * @method static array|null resubscribe(string $email, ?array $contactInfo = [], string $listName = null)
- * @method static array|null unsubscribe(string $email, string $listName = null)
+ * @method static string subscribe(string $email, array $contactInfo = [], string $listName = null)
+ * @method static string resubscribe(string $email, array $contactInfo = [], string $listName = null)
+ * @method static string unsubscribe(string $email, string $listName = null)
  * @method static LazyCollection subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null)
  * @method static int subscribersCount(string $status = 'active', ?string $listName = null)
  *
