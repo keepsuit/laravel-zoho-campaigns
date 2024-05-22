@@ -15,7 +15,7 @@ class ZohoApiException extends RuntimeException
     {
         return new static(
             message: $response['message'] ?? 'An error occurred',
-            code: (int) $response['Code'],
+            code: (int) $response['code'],
         );
     }
 }

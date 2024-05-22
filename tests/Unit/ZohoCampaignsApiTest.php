@@ -3,6 +3,7 @@
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Keepsuit\Campaigns\Api\ZohoAccessToken;
+use Keepsuit\Campaigns\Api\ZohoApiException;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 use Keepsuit\Campaigns\Api\ZohoRegion;
 
@@ -46,6 +47,21 @@ test('list subscribe', function () {
         ->toBe('A confirmation email has been sent to the user.');
 });
 
+test('list subscribe error', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/json/listsubscribe?*' => function () {
+            return Http::response([
+                'message' => 'Invalid contact email address.',
+                'status' => 'error',
+                'code' => '2004',
+            ]);
+        },
+    ]);
+
+    expect(fn () => $this->campaignsApi->listSubscribe('list-12345', 'john@example.com'))
+        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Invalid contact email address.' && $exception->getCode() === 2004);
+});
+
 test('list unsubscribe', function () {
     Http::fake([
         'campaigns.zoho.eu/api/v1.1/json/listunsubscribe?*' => function (Request $request) {
@@ -72,6 +88,21 @@ test('list unsubscribe', function () {
 
     expect($response)
         ->toBe('User successfully unsubscribed.');
+});
+
+test('list unsubscribe error', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/json/listunsubscribe?*' => function () {
+            return Http::response([
+                'message' => 'Please retry after sometime.',
+                'status' => 'error',
+                'code' => '2101',
+            ]);
+        },
+    ]);
+
+    expect(fn () => $this->campaignsApi->listUnsubscribe('list-12345', 'john@example.com'))
+        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Please retry after sometime.' && $exception->getCode() === 2101);
 });
 
 test('get list subscribers', function () {
@@ -125,6 +156,21 @@ test('get list subscribers', function () {
         ]);
 });
 
+test('get list subscribers error', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/getlistsubscribers?*' => function () {
+            return Http::response([
+                'message' => 'Listkey is empty or invalid.',
+                'status' => 'error',
+                'code' => '2501',
+            ]);
+        },
+    ]);
+
+    expect(fn () => $this->campaignsApi->listSubscribers('list-12345', 'john@example.com'))
+        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2501);
+});
+
 test('get list subscribers count', function () {
     Http::fake([
         'campaigns.zoho.eu/api/v1.1/listsubscriberscount?*' => function (Request $request) {
@@ -150,4 +196,20 @@ test('get list subscribers count', function () {
 
     expect($response)
         ->toBe(2);
+});
+
+test('get list subscribers count error', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/listsubscriberscount?*' => function () {
+            return Http::response([
+                'message' => 'Listkey is empty or invalid.',
+                'status' => 'error',
+                'code' => '2202',
+            ]);
+        },
+    ]);
+
+    expect(fn () => $this->campaignsApi->listSubscribersCount('list-12345', 'john@example.com'))
+        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2202);
+
 });
