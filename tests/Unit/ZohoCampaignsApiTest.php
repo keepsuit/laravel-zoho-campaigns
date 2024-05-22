@@ -43,12 +43,7 @@ test('list subscribe', function () {
     ]);
 
     expect($response)
-        ->toBeArray()
-        ->toMatchArray([
-            'message' => 'A confirmation email has been sent to the user.',
-            'status' => 'success',
-            'code' => 0,
-        ]);
+        ->toBe('A confirmation email has been sent to the user.');
 });
 
 test('list unsubscribe', function () {
@@ -76,12 +71,7 @@ test('list unsubscribe', function () {
     $response = $this->campaignsApi->listUnsubscribe('list-12345', 'john@example.com');
 
     expect($response)
-        ->toBeArray()
-        ->toMatchArray([
-            'message' => 'User successfully unsubscribed.',
-            'status' => 'success',
-            'code' => 0,
-        ]);
+        ->toBe('User successfully unsubscribed.');
 });
 
 test('get list subscribers', function () {

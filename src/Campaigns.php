@@ -2,9 +2,11 @@
 
 namespace Keepsuit\Campaigns;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use Keepsuit\Campaigns\Api\ZohoApiException;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 
 class Campaigns
@@ -23,50 +25,38 @@ class Campaigns
     }
 
     /**
-     * @return array{success: bool, message?: string}
+     * @throws ConnectionException
+     * @throws ZohoApiException
      */
-    public function subscribe(string $email, ?array $contactInfo = [], ?string $listName = null): array
+    public function subscribe(string $email, ?array $contactInfo = [], ?string $listName = null): string
     {
         $listKey = $this->resolveListKey($listName);
 
-        $response = $this->zohoApi->listSubscribe($listKey, $email, $contactInfo);
-
-        return [
-            'success' => Arr::get($response, 'status') === 'success',
-            'message' => Arr::get($response, 'message'),
-        ];
+        return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo);
     }
 
     /**
-     * @return array{success: bool, message?: string}
+     * @throws ConnectionException
+     * @throws ZohoApiException
      */
-    public function unsubscribe(string $email, ?string $listName = null): array
+    public function unsubscribe(string $email, ?string $listName = null): string
     {
         $listKey = $this->resolveListKey($listName);
 
-        $response = $this->zohoApi->listUnsubscribe($listKey, $email);
-
-        return [
-            'success' => Arr::get($response, 'status') === 'success',
-            'message' => Arr::get($response, 'message'),
-        ];
+        return $this->zohoApi->listUnsubscribe($listKey, $email);
     }
 
     /**
-     * @return array{success: bool, message?: string}
+     * @throws ConnectionException
+     * @throws ZohoApiException
      */
-    public function resubscribe(string $email, ?array $contactInfo = [], ?string $listName = null): array
+    public function resubscribe(string $email, ?array $contactInfo = [], ?string $listName = null): string
     {
         $listKey = $this->resolveListKey($listName);
 
         $additionalParams = ['donotmail_resub' => 'true'];
 
-        $response = $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
-
-        return [
-            'success' => Arr::get($response, 'status') === 'success',
-            'message' => Arr::get($response, 'message'),
-        ];
+        return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo, $additionalParams);
     }
 
     /**
@@ -83,6 +73,9 @@ class Campaigns
      *      lastname: string,
      *      companyname: string,
      *  }> The list of subscribers.
+     *
+     * @throws ConnectionException
+     * @throws ZohoApiException
      */
     public function subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null): LazyCollection
     {
@@ -114,6 +107,9 @@ class Campaigns
      * @param  string  $status  The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
      * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
      * @return int The count of subscribers.
+     *
+     * @throws ConnectionException
+     * @throws ZohoApiException
      */
     public function subscribersCount(string $status = 'active', ?string $listName = null): int
     {
