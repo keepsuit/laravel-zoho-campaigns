@@ -11,6 +11,8 @@ Right now only the following features are supported:
 
 - Subscribe a contact to a list
 - Unsubscribe a contact from a list
+- Get subscribers from a list
+- Get subscribers count of a list
 
 ## Installation
 
@@ -37,7 +39,7 @@ This is the contents of the published config file:
 
 ```php
 return [
-    /*
+    /**
      * The driver to use to interact with Zoho Campaigns API.
      * You may use "log" or "null" to prevent calling the
      * API directly from your environment.
@@ -57,17 +59,17 @@ return [
     'client_id' => env('CAMPAIGNS_CLIENT_ID'),
     'client_secret' => env('CAMPAIGNS_CLIENT_SECRET'),
 
-    /*
+    /**
      * The listName to use when no listName has been specified in a method.
      */
     'defaultListName' => 'subscribers',
 
-    /*
+    /**
      * Here you can define properties of the lists.
      */
     'lists' => [
 
-        /*
+        /**
          * This key is used to identify this list. It can be used
          * as the listName parameter provided in the various methods.
          *
@@ -76,7 +78,7 @@ return [
          */
         'subscribers' => [
 
-            /*
+            /**
              * A Zoho campaigns list key.
              * https://www.zoho.com/campaigns/help/developers/list-management.html
              * You can find this value from Zoho campaigns dashboard under:
@@ -108,13 +110,16 @@ use Keepsuit\Campaigns\Facades\Campaigns;
 Campaigns::subscribe('user_a@example.com');
 
 // with additional details: 
-Campaigns::subscribe('user_a@example.com', [
+Campaigns::subscribe('user_a@example.com', contactInfo: [
     'First Name' => 'John',
     'Last Name' => 'Doe',
 ]);
 
 // on a specific list:
-Campaigns::subscribe('user_a@example.com', [], 'listName');
+Campaigns::subscribe('user_a@example.com', contactInfo: [], listName: 'listName');
+
+// if user previously unsubscribed from the list, you can resubscribe them (it support the same parameters as subscribe):
+Campaigns::resubscribe('user_a@example.com');
 ```
 
 ### Unsubscribe a contact from a list
@@ -125,7 +130,32 @@ use Keepsuit\Campaigns\Facades\Campaigns;
 Campaigns::unsubscribe('user_a@example.com');
 
 // from a specific list:
-Campaigns::unsubscribe('user_a@example.com', 'listName');
+Campaigns::unsubscribe('user_a@example.com', listName: 'listName');
+```
+
+### Get subscribers from a list
+
+```php
+use Keepsuit\Campaigns\Facades\Campaigns;
+
+// This method returns a LazyCollection and will fetch additional pages when needed.
+// You can filter by status and sort the results.
+Campaigns::subscribers(status: 'active', sort: 'desc');
+
+// from a specific list:
+Campaigns::subscribers(listName: 'listName');
+```
+
+### Get subscribers count of a list
+
+```php
+use Keepsuit\Campaigns\Facades\Campaigns;
+
+// You can filter by status.
+Campaigns::subscribersCount(status: 'active');
+
+// from a specific list:
+Campaigns::subscribersCount(listName: 'listName');
 ```
 
 ## Testing
