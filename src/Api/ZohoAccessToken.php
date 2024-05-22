@@ -30,7 +30,7 @@ class ZohoAccessToken
             $this->accessToken = $this->refreshAccessToken();
         }
 
-        return $this->accessToken?->token;
+        return $this->accessToken?->token ?? '';
     }
 
     protected function refreshAccessToken(): ?Token

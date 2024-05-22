@@ -101,10 +101,11 @@ class SetupCommand extends Command
         $options = collect(ZohoRegion::cases())
             ->keyBy(fn (ZohoRegion $region) => $region->label());
 
+        $selectedOption = $this->choice('Select your region', $options->keys()->toArray());
+        assert(is_string($selectedOption));
+
         /** @var ZohoRegion $region */
-        $region = $options->get(
-            $this->choice('Select your region', $options->keys()->toArray())
-        );
+        $region = $options->get($selectedOption);
 
         config()->set('campaigns.region', $region->value);
 

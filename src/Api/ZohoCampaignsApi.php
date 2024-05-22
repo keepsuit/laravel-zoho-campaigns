@@ -2,6 +2,8 @@
 
 namespace Keepsuit\Campaigns\Api;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 class ZohoCampaignsApi
@@ -13,13 +15,20 @@ class ZohoCampaignsApi
     }
 
     /**
-     * @return array{
-     *     message: string,
-     *     status: string,
-     *     code: int,
-     * }
+     * Subscribes a contact to a list.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/contact-subscribe.html
+     *
+     * @param  string  $listKey  The list key.
+     * @param  string  $email  The email address to subscribe.
+     * @param  array  $contactInfo  Additional contact information to subscribe.
+     * @param  array  $additionalParams  Additional parameters to pass to the API.
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
-    public function listSubscribe(string $listKey, string $email, array $contactInfo = [], array $additionalParams = []): array
+    public function listSubscribe(string $listKey, string $email, array $contactInfo = [], array $additionalParams = []): string
     {
         $params = array_merge([
             'listkey' => $listKey,
@@ -29,23 +38,31 @@ class ZohoCampaignsApi
             ], $contactInfo)),
         ], $additionalParams);
 
-        return Http::baseUrl($this->endpoint())
-            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
-            ->withHeaders([
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])
+        $response = $this->newRequest()
             ->post(sprintf('/json/listsubscribe?%s', http_build_query($params)))
             ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
     }
 
     /**
-     * @return array{
-     *     message: string,
-     *     status: string,
-     *     code: int,
-     * }
+     * Unsubscribes a contact from a list.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/contact-unsubscribe.html
+     *
+     * @param  string  $listKey  The list key.
+     * @param  string  $email  The email address to unsubscribe.
+     * @param  array  $additionalParams  Additional parameters to pass to the API.
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
-    public function listUnsubscribe(string $listKey, string $email, array $additionalParams = []): array
+    public function listUnsubscribe(string $listKey, string $email, array $additionalParams = []): string
     {
         $params = array_merge([
             'listkey' => $listKey,
@@ -55,17 +72,21 @@ class ZohoCampaignsApi
             ]),
         ], $additionalParams);
 
-        return Http::baseUrl($this->endpoint())
-            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
-            ->withHeaders([
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])
+        $response = $this->newRequest()
             ->post(sprintf('/json/listunsubscribe?%s', http_build_query($params)))
             ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
     }
 
     /**
      * Retrieves the list of subscribers for a given list key with various options.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/get-list-subscribers.html
      *
      * @param  string  $listKey  The list key.
      * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'. Default is 'active'
@@ -80,6 +101,9 @@ class ZohoCampaignsApi
      *     lastname: string,
      *     companyname: string,
      * }> The list of subscribers.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
     public function listSubscribers(
         string $listKey,
@@ -98,13 +122,13 @@ class ZohoCampaignsApi
             'status' => $status,
         ], $additionalParams);
 
-        $response = Http::baseUrl($this->endpoint())
-            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
-            ->withHeaders([
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])
+        $response = $this->newRequest()
             ->get(sprintf('/getlistsubscribers?%s', http_build_query($params)))
             ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
 
         return $response['list_of_details'] ?? [];
     }
@@ -112,9 +136,14 @@ class ZohoCampaignsApi
     /**
      * Retrieves the count of subscribers for a given list key and status.
      *
+     * @link https://www.zoho.com/campaigns/help/developers/view-total-contacts.html
+     *
      * @param  string  $listKey  The list key.
      * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'unsub', 'bounce' and 'spam'. Default is 'active'
      * @return int The count of subscribers.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
     public function listSubscribersCount(
         string $listKey,
@@ -127,15 +156,24 @@ class ZohoCampaignsApi
             'status' => $status,
         ], $additionalParams);
 
-        $response = Http::baseUrl($this->endpoint())
-            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
-            ->withHeaders([
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])
+        $response = $this->newRequest()
             ->get(sprintf('/listsubscriberscount?%s', http_build_query($params)))
             ->json();
 
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
         return $response['no_of_contacts'] ?? 0;
+    }
+
+    protected function newRequest(): PendingRequest
+    {
+        return Http::baseUrl($this->endpoint())
+            ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
+            ->withHeaders([
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ]);
     }
 
     protected function endpoint(): string

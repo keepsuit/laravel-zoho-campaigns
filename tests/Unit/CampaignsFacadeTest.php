@@ -7,7 +7,7 @@ it('can subscribe user to a list', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribe')
         ->with('subscribers-list-key', 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'])
-        ->andReturn(['status' => 'success', 'message' => 'User subscribed successfully']);
+        ->andReturn('User subscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
@@ -16,17 +16,14 @@ it('can subscribe user to a list', function () {
         'Last Name' => 'def',
     ]);
 
-    expect($response)->toMatchArray([
-        'success' => true,
-        'message' => 'User subscribed successfully',
-    ]);
+    expect($response)->toBe('User subscribed successfully');
 });
 
 it('can resubscribe user to a list', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribe')
         ->with('subscribers-list-key', 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'], ['donotmail_resub' => 'true'])
-        ->andReturn(['status' => 'success', 'message' => 'User resubscribed successfully']);
+        ->andReturn('User resubscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
@@ -35,26 +32,20 @@ it('can resubscribe user to a list', function () {
         'Last Name' => 'def',
     ]);
 
-    expect($response)->toMatchArray([
-        'success' => true,
-        'message' => 'User resubscribed successfully',
-    ]);
+    expect($response)->toBe('User resubscribed successfully');
 });
 
 it('can unsubscribe user from a list', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listUnsubscribe')
         ->with('subscribers-list-key', 'test@example.com')
-        ->andReturn(['status' => 'success', 'message' => 'User unsubscribed successfully']);
+        ->andReturn('User unsubscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
     $response = Campaigns::unsubscribe('test@example.com');
 
-    expect($response)->toMatchArray([
-        'success' => true,
-        'message' => 'User unsubscribed successfully',
-    ]);
+    expect($response)->toBe('User unsubscribed successfully');
 });
 
 it('can get list subscribers', function () {
