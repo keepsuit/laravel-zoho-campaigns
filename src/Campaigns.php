@@ -84,7 +84,8 @@ class Campaigns
         return LazyCollection::make(function () use ($status, $sort, $listKey, $maxRange) {
             $fromIndex = 1;
             $range = $maxRange ?? $this->zohoApi->listSubscribersCount($listKey, status: $status);
-
+            if (empty($range)) return;
+            
             while (true) {
                 $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $range);
 
