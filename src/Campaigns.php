@@ -77,13 +77,13 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null): LazyCollection
+    public function subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null, ?int $maxRange = 20): LazyCollection
     {
         $listKey = $this->resolveListKey($listName);
 
-        return LazyCollection::make(function () use ($status, $sort, $listKey) {
+        return LazyCollection::make(function () use ($status, $sort, $listKey, $maxRange) {
             $fromIndex = 1;
-            $range = 20;
+            $range = $maxRange ?? $this->zohoApi->listSubscribersCount($listKey, status: $status);
 
             while (true) {
                 $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $range);
