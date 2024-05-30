@@ -50,6 +50,10 @@ it('can unsubscribe user from a list', function () {
 
 it('can get list subscribers', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('listSubscribersCount')
+        ->with('subscribers-list-key', 'active')
+        ->andReturn(23); // Adjust this value as per your test requirement
+
     $campaignsApi->shouldReceive('listSubscribers')
         ->with('subscribers-list-key', 'active', 'asc', 1, 20)
         ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(1, 20)));
