@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v0.3.1 - 2024-05-31
+
+### What's Changed
+
+* Improved subscribers list fetching by @andreibaca in https://github.com/keepsuit/laravel-zoho-campaigns/pull/23
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/0.3.0...0.3.1
+
 ## v0.3.0 - 2024-05-22
 
 ### What's Changed
