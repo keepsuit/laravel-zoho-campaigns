@@ -64,6 +64,7 @@ class Campaigns
      *
      * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'. Default is 'active'
      * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
+     * @param  int  $chunkSize  The number of subscribers to retrieve per request.
      * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
      * @return LazyCollection<array-key, array{
      *      zuid: string,
@@ -77,26 +78,37 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribers(string $status = 'active', string $sort = 'asc', ?string $listName = null): LazyCollection
+    public function subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null): LazyCollection
     {
+        // Zoho API has a limit of 650 subscribers per request.
+        $chunkSize = min(650, max(1, $chunkSize));
+
         $listKey = $this->resolveListKey($listName);
 
-        return LazyCollection::make(function () use ($status, $sort, $listKey) {
+        return LazyCollection::make(function () use ($status, $sort, $listKey, $chunkSize) {
             $fromIndex = 1;
-            $range = 20;
 
             while (true) {
-                $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $range);
+                try {
+                    $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $chunkSize);
+                } catch (ZohoApiException $exception) {
+                    // If there are no other subscribers the api will return error 2502 with message "Yet,There are no contacts in this list."
+                    if ($exception->getCode() === 2502) {
+                        break;
+                    }
+
+                    throw $exception;
+                }
 
                 foreach ($response as $subscriber) {
                     yield $subscriber;
                 }
 
-                if (count($response) < $range) {
+                if (count($response) < $chunkSize) {
                     break;
                 }
 
-                $fromIndex += $range;
+                $fromIndex += $chunkSize;
             }
         });
     }
