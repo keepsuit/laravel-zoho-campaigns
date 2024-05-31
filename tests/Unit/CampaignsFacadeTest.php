@@ -50,9 +50,6 @@ it('can unsubscribe user from a list', function () {
 
 it('can get list subscribers', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
-    $campaignsApi->shouldReceive('listSubscribersCount')
-        ->with('subscribers-list-key', 'active')
-        ->andReturn(23); // Adjust this value as per your test requirement
 
     $campaignsApi->shouldReceive('listSubscribers')
         ->with('subscribers-list-key', 'active', 'asc', 1, 20)
@@ -63,9 +60,29 @@ it('can get list subscribers', function () {
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::subscribers();
+    $response = Campaigns::subscribers(chunkSize: 20);
 
     expect($response)->count()->toBe(23);
+});
+
+it('handle no contacts in the list error in list subscribers', function () {
+    $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('listSubscribersCount')
+        ->with('subscribers-list-key', 'active')
+        ->andReturn(23); // Adjust this value as per your test requirement
+
+    $campaignsApi->shouldReceive('listSubscribers')
+        ->with('subscribers-list-key', 'active', 'asc', 1, 20)
+        ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(1, 20)));
+    $campaignsApi->shouldReceive('listSubscribers')
+        ->with('subscribers-list-key', 'active', 'asc', 21, 20)
+        ->andThrow(new \Keepsuit\Campaigns\Api\ZohoApiException('Yet,There are no contacts in this list.', 2502));
+
+    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
+
+    $response = Campaigns::subscribers(chunkSize: 20);
+
+    expect($response)->count()->toBe(20);
 });
 
 it('can get list subscribers count', function () {
