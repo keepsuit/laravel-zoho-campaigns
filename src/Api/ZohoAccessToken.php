@@ -13,8 +13,7 @@ class ZohoAccessToken
 
     public function __construct(
         protected ZohoAccountsApi $accountsApi
-    ) {
-    }
+    ) {}
 
     public function get(): string
     {
@@ -30,7 +29,7 @@ class ZohoAccessToken
             $this->accessToken = $this->refreshAccessToken();
         }
 
-        return $this->accessToken?->token ?? '';
+        return $this->accessToken->token ?? '';
     }
 
     protected function refreshAccessToken(): ?Token

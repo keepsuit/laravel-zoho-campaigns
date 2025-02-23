@@ -6,10 +6,12 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\LazyCollection;
 
 /**
+ * @phpstan-import-type ZohoCustomer from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
+ *
  * @method static string subscribe(string $email, array $contactInfo = [], string $listName = null)
  * @method static string resubscribe(string $email, array $contactInfo = [], string $listName = null)
  * @method static string unsubscribe(string $email, string $listName = null)
- * @method static LazyCollection subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null)
+ * @method static LazyCollection<array-key, ZohoCustomer> subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null)
  * @method static int subscribersCount(string $status = 'active', ?string $listName = null)
  *
  * @see \Keepsuit\Campaigns\Campaigns

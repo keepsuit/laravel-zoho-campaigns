@@ -13,4 +13,6 @@ parameters:
 
     ignoreErrors:
         - identifier: missingType.iterableValue
+        - identifier: larastan.noEnvCallsOutsideOfConfig
+          path: config/*
 

@@ -6,13 +6,22 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @phpstan-type ZohoCustomer array{
+ *      zuid: string,
+ *      phone: string,
+ *      contact_email: string,
+ *      firstname: string,
+ *      lastname: string,
+ *      companyname: string,
+ *  }
+ */
 class ZohoCampaignsApi
 {
     public function __construct(
         protected ZohoRegion $region,
         protected ZohoAccessToken $accessToken
-    ) {
-    }
+    ) {}
 
     /**
      * Subscribes a contact to a list.
@@ -93,14 +102,7 @@ class ZohoCampaignsApi
      * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
      * @param  int  $fromIndex  The starting index for the results. Default is 1.
      * @param  int  $range  The range of results to retrieve. Default is 25.
-     * @return array<array-key, array{
-     *     zuid: string,
-     *     phone: string,
-     *     contact_email: string,
-     *     firstname: string,
-     *     lastname: string,
-     *     companyname: string,
-     * }> The list of subscribers.
+     * @return array<array-key, ZohoCustomer> The list of subscribers.
      *
      * @throws ZohoApiException
      * @throws ConnectionException

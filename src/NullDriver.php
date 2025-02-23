@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class NullDriver
 {
-    public function __construct(protected bool $logCalls = false)
-    {
-    }
+    public function __construct(protected bool $logCalls = false) {}
 
     public function __call(string $name, array $arguments): void
     {

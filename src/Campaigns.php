@@ -9,6 +9,9 @@ use Illuminate\Support\LazyCollection;
 use Keepsuit\Campaigns\Api\ZohoApiException;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 
+/**
+ * @phpstan-import-type ZohoCustomer from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
+ */
 class Campaigns
 {
     protected string $defaultListName;
@@ -66,14 +69,7 @@ class Campaigns
      * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
      * @param  int  $chunkSize  The number of subscribers to retrieve per request.
      * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
-     * @return LazyCollection<array-key, array{
-     *      zuid: string,
-     *      phone: string,
-     *      contact_email: string,
-     *      firstname: string,
-     *      lastname: string,
-     *      companyname: string,
-     *  }> The list of subscribers.
+     * @return LazyCollection<array-key, ZohoCustomer> The list of subscribers.
      *
      * @throws ConnectionException
      * @throws ZohoApiException

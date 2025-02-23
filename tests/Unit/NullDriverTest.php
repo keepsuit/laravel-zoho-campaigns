@@ -13,7 +13,7 @@ it('can construct null driver', function () {
 });
 
 it('can call any method on null driver', function () {
-    $driver = new NullDriver();
+    $driver = new NullDriver;
 
     expect($driver->subscribe('test@example.com'))->toBeNull();
     expect($driver->unsubscribe('test@example.com'))->toBeNull();
