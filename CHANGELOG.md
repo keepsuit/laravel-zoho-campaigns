@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v0.4.0 - 2025-02-23
+
+### What's Changed
+
+* Drop laravel 9
+* Support laravel 12
+* Bump dependabot/fetch-metadata from 2.1.0 to 2.2.0 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/25
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/26
+* Bump aglipanci/laravel-pint-action from 2.4 to 2.5 by @dependabot in https://github.com/keepsuit/laravel-zoho-campaigns/pull/27
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/0.3.1...0.4.0
+
 ## v0.3.1 - 2024-05-31
 
 ### What's Changed
