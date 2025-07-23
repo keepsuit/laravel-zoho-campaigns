@@ -31,9 +31,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribe(string $email, array $contactInfo = [], ?string $listName = null): string
+    public function subscribe(string $email, array $contactInfo = [], ?string $listName = null, ?string $listKey = null): string
     {
-        $listKey = $this->resolveListKey($listName);
+        $listKey = $listKey ?? $this->resolveListKey($listName);
 
         return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo);
     }
@@ -42,9 +42,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function resubscribe(string $email, array $contactInfo = [], ?string $listName = null): string
+    public function resubscribe(string $email, array $contactInfo = [], ?string $listName = null, ?string $listKey = null): string
     {
-        $listKey = $this->resolveListKey($listName);
+        $listKey = $listKey ?? $this->resolveListKey($listName);
 
         $additionalParams = ['donotmail_resub' => 'true'];
 
@@ -55,9 +55,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function unsubscribe(string $email, ?string $listName = null): string
+    public function unsubscribe(string $email, ?string $listName = null, ?string $listKey = null): string
     {
-        $listKey = $this->resolveListKey($listName);
+        $listKey = $listKey ?? $this->resolveListKey($listName);
 
         return $this->zohoApi->listUnsubscribe($listKey, $email);
     }
@@ -74,12 +74,12 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null): LazyCollection
+    public function subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null, ?string $listKey = null): LazyCollection
     {
         // Zoho API has a limit of 650 subscribers per request.
         $chunkSize = min(650, max(1, $chunkSize));
 
-        $listKey = $this->resolveListKey($listName);
+        $listKey = $listKey ?? $this->resolveListKey($listName);
 
         return LazyCollection::make(function () use ($status, $sort, $listKey, $chunkSize) {
             $fromIndex = 1;
@@ -119,9 +119,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribersCount(string $status = 'active', ?string $listName = null): int
+    public function subscribersCount(string $status = 'active', ?string $listName = null, ?string $listKey = null): int
     {
-        $listKey = $this->resolveListKey($listName);
+        $listKey = $listKey ?? $this->resolveListKey($listName);
 
         return $this->zohoApi->listSubscribersCount($listKey, $status);
     }

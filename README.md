@@ -118,6 +118,9 @@ Campaigns::subscribe('user_a@example.com', contactInfo: [
 // on a specific list:
 Campaigns::subscribe('user_a@example.com', contactInfo: [], listName: 'listName');
 
+// on a specific list via list key
+Campaigns::subscribe('user_a@example.com', contactInfo: [], listKey: '3z9d17e6b4f3a2c5d8a1bc9478df32561e3ab4d2c4fc7a5e9c0db8e34176ca92a0');
+
 // if user previously unsubscribed from the list, you can resubscribe them (it support the same parameters as subscribe):
 Campaigns::resubscribe('user_a@example.com');
 ```
