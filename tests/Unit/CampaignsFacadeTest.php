@@ -19,6 +19,19 @@ it('can subscribe user to a list', function () {
     expect($response)->toBe('User subscribed successfully');
 });
 
+it('can subscribe user to a list with list key', function () {
+    $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('listSubscribe')
+        ->with('custom-list-key', 'test@example.com', [])
+        ->andReturn('User subscribed successfully');
+
+    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
+
+    $response = Campaigns::subscribe('test@example.com', list: 'custom-list-key');
+
+    expect($response)->toBe('User subscribed successfully');
+});
+
 it('can resubscribe user to a list', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribe')

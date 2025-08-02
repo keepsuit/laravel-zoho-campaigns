@@ -31,9 +31,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribe(string $email, array $contactInfo = [], ?string $listName = null, ?string $listKey = null): string
+    public function subscribe(string $email, array $contactInfo = [], ?string $list = null): string
     {
-        $listKey = $listKey ?? $this->resolveListKey($listName);
+        $listKey = $this->resolveListKey($list);
 
         return $this->zohoApi->listSubscribe($listKey, $email, $contactInfo);
     }
@@ -42,9 +42,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function resubscribe(string $email, array $contactInfo = [], ?string $listName = null, ?string $listKey = null): string
+    public function resubscribe(string $email, array $contactInfo = [], ?string $list = null): string
     {
-        $listKey = $listKey ?? $this->resolveListKey($listName);
+        $listKey = $this->resolveListKey($list);
 
         $additionalParams = ['donotmail_resub' => 'true'];
 
@@ -55,9 +55,9 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function unsubscribe(string $email, ?string $listName = null, ?string $listKey = null): string
+    public function unsubscribe(string $email, ?string $list = null): string
     {
-        $listKey = $listKey ?? $this->resolveListKey($listName);
+        $listKey = $this->resolveListKey($list);
 
         return $this->zohoApi->listUnsubscribe($listKey, $email);
     }
@@ -68,18 +68,18 @@ class Campaigns
      * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'recent', 'mostrecent', 'unsub', and 'bounce'. Default is 'active'
      * @param  string  $sort  The sort order of the results. Possible values are 'asc' and 'desc'. Default is 'asc'.
      * @param  int  $chunkSize  The number of subscribers to retrieve per request.
-     * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
+     * @param  string|null  $list  The name or the key of the list. If null, the default list name will be used.
      * @return LazyCollection<array-key, ZohoCustomer> The list of subscribers.
      *
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $listName = null, ?string $listKey = null): LazyCollection
+    public function subscribers(string $status = 'active', string $sort = 'asc', int $chunkSize = 500, ?string $list = null): LazyCollection
     {
         // Zoho API has a limit of 650 subscribers per request.
         $chunkSize = min(650, max(1, $chunkSize));
 
-        $listKey = $listKey ?? $this->resolveListKey($listName);
+        $listKey = $this->resolveListKey($list);
 
         return LazyCollection::make(function () use ($status, $sort, $listKey, $chunkSize) {
             $fromIndex = 1;
@@ -113,29 +113,29 @@ class Campaigns
      * Retrieves the count of subscribers for a given list name and status.
      *
      * @param  string  $status  The status of the subscribers to count. Possible values are 'active', 'unsub', 'bounce', and 'spam'.
-     * @param  string|null  $listName  The name of the list. If null, the default list name will be used.
+     * @param  string|null  $list  The name or the key of the list. If null, the default list name will be used.
      * @return int The count of subscribers.
      *
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function subscribersCount(string $status = 'active', ?string $listName = null, ?string $listKey = null): int
+    public function subscribersCount(string $status = 'active', ?string $list = null): int
     {
-        $listKey = $listKey ?? $this->resolveListKey($listName);
+        $listKey = $this->resolveListKey($list);
 
         return $this->zohoApi->listSubscribersCount($listKey, $status);
     }
 
-    protected function resolveListKey(?string $listName = null): string
+    protected function resolveListKey(?string $list = null): string
     {
-        $listName = $listName ?? $this->defaultListName;
+        $listName = $list ?? $this->defaultListName;
 
         $listKey = Arr::get($this->lists->get($listName, []), 'listKey');
 
-        if ($listKey === null) {
-            throw new \Error(sprintf('Cannot resolve list %s', $listName));
+        if ($listKey !== null || $list !== null) {
+            return $listKey ?? $list;
         }
 
-        return $listKey;
+        throw new \Error(sprintf('Cannot resolve list %s', $listName));
     }
 }
