@@ -3,10 +3,10 @@
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 use Keepsuit\Campaigns\Facades\Campaigns;
 
-it('can subscribe user to a list', function () {
+it('can subscribe user to a list', function (?string $list, string $expectedListKey) {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribe')
-        ->with('subscribers-list-key', 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'])
+        ->with($expectedListKey, 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'])
         ->andReturn('User subscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
@@ -14,28 +14,19 @@ it('can subscribe user to a list', function () {
     $response = Campaigns::subscribe('test@example.com', [
         'First Name' => 'abc',
         'Last Name' => 'def',
-    ]);
+    ], list: $list);
 
     expect($response)->toBe('User subscribed successfully');
-});
+})->with([
+    'default' => [null, 'subscribers-list-key'],
+    'list name' => ['subscribers', 'subscribers-list-key'],
+    'list key' => ['custom-list-key', 'custom-list-key'],
+]);
 
-it('can subscribe user to a list with list key', function () {
+it('can resubscribe user to a list', function (?string $list, string $expectedListKey) {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribe')
-        ->with('custom-list-key', 'test@example.com', [])
-        ->andReturn('User subscribed successfully');
-
-    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
-
-    $response = Campaigns::subscribe('test@example.com', list: 'custom-list-key');
-
-    expect($response)->toBe('User subscribed successfully');
-});
-
-it('can resubscribe user to a list', function () {
-    $campaignsApi = mock(ZohoCampaignsApi::class);
-    $campaignsApi->shouldReceive('listSubscribe')
-        ->with('subscribers-list-key', 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'], ['donotmail_resub' => 'true'])
+        ->with($expectedListKey, 'test@example.com', ['First Name' => 'abc', 'Last Name' => 'def'], ['donotmail_resub' => 'true'])
         ->andReturn('User resubscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
@@ -43,40 +34,52 @@ it('can resubscribe user to a list', function () {
     $response = Campaigns::resubscribe('test@example.com', [
         'First Name' => 'abc',
         'Last Name' => 'def',
-    ]);
+    ], list: $list);
 
     expect($response)->toBe('User resubscribed successfully');
-});
+})->with([
+    'default' => [null, 'subscribers-list-key'],
+    'list name' => ['subscribers', 'subscribers-list-key'],
+    'list key' => ['custom-list-key', 'custom-list-key'],
+]);
 
-it('can unsubscribe user from a list', function () {
+it('can unsubscribe user from a list', function (?string $list, string $expectedListKey) {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listUnsubscribe')
-        ->with('subscribers-list-key', 'test@example.com')
+        ->with($expectedListKey, 'test@example.com')
         ->andReturn('User unsubscribed successfully');
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::unsubscribe('test@example.com');
+    $response = Campaigns::unsubscribe('test@example.com', list: $list);
 
     expect($response)->toBe('User unsubscribed successfully');
-});
+})->with([
+    'default' => [null, 'subscribers-list-key'],
+    'list name' => ['subscribers', 'subscribers-list-key'],
+    'list key' => ['custom-list-key', 'custom-list-key'],
+]);
 
-it('can get list subscribers', function () {
+it('can get list subscribers', function (?string $list, string $expectedListKey) {
     $campaignsApi = mock(ZohoCampaignsApi::class);
 
     $campaignsApi->shouldReceive('listSubscribers')
-        ->with('subscribers-list-key', 'active', 'asc', 1, 20)
+        ->with($expectedListKey, 'active', 'asc', 1, 20)
         ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(1, 20)));
     $campaignsApi->shouldReceive('listSubscribers')
-        ->with('subscribers-list-key', 'active', 'asc', 21, 20)
+        ->with($expectedListKey, 'active', 'asc', 21, 20)
         ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(21, 23)));
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::subscribers(chunkSize: 20);
+    $response = Campaigns::subscribers(chunkSize: 20, list: $list);
 
     expect($response)->count()->toBe(23);
-});
+})->with([
+    'default' => [null, 'subscribers-list-key'],
+    'list name' => ['subscribers', 'subscribers-list-key'],
+    'list key' => ['custom-list-key', 'custom-list-key'],
+]);
 
 it('handle no contacts in the list error in list subscribers', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
@@ -98,15 +101,19 @@ it('handle no contacts in the list error in list subscribers', function () {
     expect($response)->count()->toBe(20);
 });
 
-it('can get list subscribers count', function () {
+it('can get list subscribers count', function (?string $list, string $expectedListKey) {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribersCount')
-        ->with('subscribers-list-key', 'active')
+        ->with($expectedListKey, 'active')
         ->andReturn(3);
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::subscribersCount();
+    $response = Campaigns::subscribersCount(list: $list);
 
     expect($response)->toBe(3);
-});
+})->with([
+    'default' => [null, 'subscribers-list-key'],
+    'list name' => ['subscribers', 'subscribers-list-key'],
+    'list key' => ['custom-list-key', 'custom-list-key'],
+]);
