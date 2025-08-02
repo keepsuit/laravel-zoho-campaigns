@@ -132,10 +132,10 @@ class Campaigns
 
         $listKey = Arr::get($this->lists->get($listName, []), 'listKey');
 
-        if ($listKey !== null || $list !== null) {
-            return $listKey ?? $list;
+        if ($listKey === null && $list === null) {
+            throw new \RuntimeException(sprintf('Cannot resolve list %s', $listName));
         }
 
-        throw new \Error(sprintf('Cannot resolve list %s', $listName));
+        return $listKey ?? $list;
     }
 }
