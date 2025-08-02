@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v1.0.0 - 2025-08-02
+
+### What's Changed
+
+* Dropped support for laravel 10
+* Dropped support for php 8.1
+* Add support for specifying list via list key by @4lun in https://github.com/keepsuit/laravel-zoho-campaigns/pull/30
+
+### New Contributors
+
+* @4lun made their first contribution in https://github.com/keepsuit/laravel-zoho-campaigns/pull/30
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/0.4.0...1.0.0
+
 ## v0.4.0 - 2025-02-23
 
 ### What's Changed
