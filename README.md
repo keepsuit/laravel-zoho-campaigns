@@ -116,7 +116,10 @@ Campaigns::subscribe('user_a@example.com', contactInfo: [
 ]);
 
 // on a specific list:
-Campaigns::subscribe('user_a@example.com', contactInfo: [], listName: 'listName');
+Campaigns::subscribe('user_a@example.com', contactInfo: [], list: 'listName');
+
+// on a specific list via list key
+Campaigns::subscribe('user_a@example.com', contactInfo: [], list: '3z9d17e6b4f3a2c5d8a1bc9478df32561e3ab4d2c4fc7a5e9c0db8e34176ca92a0');
 
 // if user previously unsubscribed from the list, you can resubscribe them (it support the same parameters as subscribe):
 Campaigns::resubscribe('user_a@example.com');
@@ -130,7 +133,10 @@ use Keepsuit\Campaigns\Facades\Campaigns;
 Campaigns::unsubscribe('user_a@example.com');
 
 // from a specific list:
-Campaigns::unsubscribe('user_a@example.com', listName: 'listName');
+Campaigns::unsubscribe('user_a@example.com', list: 'listName');
+
+// on a specific list via list key
+Campaigns::unsubscribe('user_a@example.com', list: '3z9d17e6b4f3a2c5d8a1bc9478df32561e3ab4d2c4fc7a5e9c0db8e34176ca92a0');
 ```
 
 ### Get subscribers from a list
@@ -143,7 +149,10 @@ use Keepsuit\Campaigns\Facades\Campaigns;
 Campaigns::subscribers(status: 'active', sort: 'desc');
 
 // from a specific list:
-Campaigns::subscribers(listName: 'listName');
+Campaigns::subscribers(list: 'listName');
+
+// on a specific list via list key
+Campaigns::subscribers(list: '3z9d17e6b4f3a2c5d8a1bc9478df32561e3ab4d2c4fc7a5e9c0db8e34176ca92a0');
 ```
 
 ### Get subscribers count of a list
@@ -155,7 +164,10 @@ use Keepsuit\Campaigns\Facades\Campaigns;
 Campaigns::subscribersCount(status: 'active');
 
 // from a specific list:
-Campaigns::subscribersCount(listName: 'listName');
+Campaigns::subscribersCount(list: 'listName');
+
+// on a specific list via list key
+Campaigns::subscribersCount(list: '3z9d17e6b4f3a2c5d8a1bc9478df32561e3ab4d2c4fc7a5e9c0db8e34176ca92a0');
 ```
 
 ## Testing
