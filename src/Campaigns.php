@@ -157,7 +157,7 @@ class Campaigns
      * @throws ConnectionException
      * @throws ZohoApiException
      */
-    public function associateTag(string $email, string $tag): string
+    public function detachTag(string $email, string $tag): string
     {
         return $this->zohoApi->tagDeassociate($tag, $email);
     }
