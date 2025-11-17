@@ -197,6 +197,7 @@ class ZohoCampaignsApi
     public function tagCreate(string $tagName, array $additionalParams = []): string
     {
         $params = array_merge([
+            'resfmt' => 'JSON',
             'tagName' => $tagName,
         ], $additionalParams);
 
@@ -225,6 +226,7 @@ class ZohoCampaignsApi
     {
         $response = $this->newRequest()
             ->get(sprintf('/tag/delete?%s', http_build_query([
+                'resfmt' => 'JSON',
                 'tagName' => $tagName,
             ])))
             ->json();
@@ -249,7 +251,9 @@ class ZohoCampaignsApi
     public function tags(): array
     {
         $response = $this->newRequest()
-            ->get('/tag/getalltags')
+            ->get(sprintf('/tag/getalltags?%s', http_build_query([
+                'resfmt' => 'JSON',
+            ])))
             ->json();
 
         if (isset($response['status']) && $response['status'] === 'error') {
@@ -274,6 +278,7 @@ class ZohoCampaignsApi
     public function tagAssociate(string $tagName, string $email): string
     {
         $params = [
+            'resfmt' => 'JSON',
             'tagName' => $tagName,
             'lead_email' => $email,
         ];
@@ -302,6 +307,7 @@ class ZohoCampaignsApi
     public function tagDeassociate(string $tagName, string $email): string
     {
         $params = [
+            'resfmt' => 'JSON',
             'tagName' => $tagName,
             'lead_email' => $email,
         ];
@@ -320,6 +326,7 @@ class ZohoCampaignsApi
     protected function newRequest(): PendingRequest
     {
         return Http::baseUrl($this->endpoint())
+            ->throw()
             ->withToken($this->accessToken->get(), 'Zoho-oauthtoken')
             ->withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
