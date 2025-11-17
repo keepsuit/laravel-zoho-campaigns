@@ -148,7 +148,18 @@ class Campaigns
      */
     public function attachTag(string $email, string $tag): string
     {
-        return $this->zohoApi->tagAssociate($tag, $email);
+        try {
+            return $this->zohoApi->tagAssociate($tag, $email);
+        } catch (ZohoApiException $exception) {
+            // Tag not found
+            if ($exception->getCode() === 9001) {
+                $this->zohoApi->tagCreate($tag);
+
+                return $this->zohoApi->tagAssociate($tag, $email);
+            }
+
+            throw $exception;
+        }
     }
 
     /**
@@ -159,7 +170,16 @@ class Campaigns
      */
     public function detachTag(string $email, string $tag): string
     {
-        return $this->zohoApi->tagDeassociate($tag, $email);
+        try {
+            return $this->zohoApi->tagDeassociate($tag, $email);
+        } catch (ZohoApiException $exception) {
+            // Tag not found
+            if ($exception->getCode() === 9001) {
+                return $exception->getMessage();
+            }
+
+            throw $exception;
+        }
     }
 
     protected function resolveListKey(?string $list = null): string
