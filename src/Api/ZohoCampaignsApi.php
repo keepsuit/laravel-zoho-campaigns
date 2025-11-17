@@ -4,6 +4,7 @@ namespace Keepsuit\Campaigns\Api;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -15,6 +16,16 @@ use Illuminate\Support\Facades\Http;
  *      lastname: string,
  *      companyname: string,
  *  }
+ * @phpstan-type ZohoTag array{
+ *     tagowner: string,
+ *     tag_created_time: string,
+ *     tag_name: string,
+ *     tag_color: string,
+ *     tag_desc: string,
+ *     tagged_contact_count: string,
+ *     is_crm_tag: string,
+ *     zuid: string,
+ * }
  */
 class ZohoCampaignsApi
 {
@@ -167,6 +178,84 @@ class ZohoCampaignsApi
         }
 
         return $response['no_of_contacts'] ?? 0;
+    }
+
+    /**
+     * Create a new tag to associate with contacts.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/tag-management/create-tag.html
+     *
+     * @param  array{
+     *     tagDesc?: string,
+     *     color?: string,
+     * }  $additionalParams
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException|ConnectionException
+     */
+    public function tagCreate(string $tagName, array $additionalParams = []): string
+    {
+        $params = array_merge([
+            'tagName' => $tagName,
+        ], $additionalParams);
+
+        $response = $this->newRequest()
+            ->get(sprintf('/tag/add?%s', http_build_query($params)))
+            ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
+    }
+
+    /**
+     * Delete an existing tag.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/tag-management/delete-tag.html
+     *
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException|ConnectionException
+     */
+    public function tagDelete(string $tagName): string
+    {
+        $response = $this->newRequest()
+            ->get(sprintf('/tag/delete?%s', http_build_query([
+                'tagName' => $tagName,
+            ])))
+            ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
+    }
+
+    /**
+     * Retrieve all existing tags.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/tag-management/get-all-tags.html
+     *
+     * @return array<array-key, ZohoTag>
+     *
+     * @throws ZohoApiException|ConnectionException
+     */
+    public function tags(): array
+    {
+        $response = $this->newRequest()
+            ->get('/tag/getalltags')
+            ->json();
+
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return Collection::make($response['tags'] ?? [])
+            ->flatMap(fn (array $tag) => $tag)
+            ->all();
     }
 
     protected function newRequest(): PendingRequest
