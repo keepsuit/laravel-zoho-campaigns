@@ -307,3 +307,55 @@ test('get tags', function () {
             ],
         ]);
 });
+
+test('associate tag', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/tag/associate*' => function (Request $request) {
+            parse_str($request->toPsrRequest()->getUri()->getQuery(), $query);
+
+            expect($query)->toMatchArray([
+                'tagName' => 'TEST',
+                'lead_email' => 'test@example.com',
+            ]);
+
+            expect($request->header('Authorization'))->toBe(['Zoho-oauthtoken access-token']);
+
+            return Http::response([
+                'message' => 'Tag associated successfully',
+                'status' => 'success',
+                'code' => 0,
+            ]);
+        },
+    ]);
+
+    $response = $this->campaignsApi->tagAssociate('TEST', 'test@example.com');
+
+    expect($response)
+        ->toBe('Tag associated successfully');
+});
+
+test('deassociate tag', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/tag/deassociate*' => function (Request $request) {
+            parse_str($request->toPsrRequest()->getUri()->getQuery(), $query);
+
+            expect($query)->toMatchArray([
+                'tagName' => 'TEST',
+                'lead_email' => 'test@example.com',
+            ]);
+
+            expect($request->header('Authorization'))->toBe(['Zoho-oauthtoken access-token']);
+
+            return Http::response([
+                'message' => 'Tag deassociated successfully',
+                'status' => 'success',
+                'code' => 0,
+            ]);
+        },
+    ]);
+
+    $response = $this->campaignsApi->tagDeassociate('TEST', 'test@example.com');
+
+    expect($response)
+        ->toBe('Tag deassociated successfully');
+});

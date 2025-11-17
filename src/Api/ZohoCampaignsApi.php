@@ -191,7 +191,8 @@ class ZohoCampaignsApi
      * }  $additionalParams
      * @return string Response message from the API.
      *
-     * @throws ZohoApiException|ConnectionException
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
     public function tagCreate(string $tagName, array $additionalParams = []): string
     {
@@ -217,7 +218,8 @@ class ZohoCampaignsApi
      *
      * @return string Response message from the API.
      *
-     * @throws ZohoApiException|ConnectionException
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
     public function tagDelete(string $tagName): string
     {
@@ -241,7 +243,8 @@ class ZohoCampaignsApi
      *
      * @return array<array-key, ZohoTag>
      *
-     * @throws ZohoApiException|ConnectionException
+     * @throws ZohoApiException
+     * @throws ConnectionException
      */
     public function tags(): array
     {
@@ -256,6 +259,62 @@ class ZohoCampaignsApi
         return Collection::make($response['tags'] ?? [])
             ->flatMap(fn (array $tag) => $tag)
             ->all();
+    }
+
+    /**
+     * Associate a tag with a contact.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/tag-management/associate-tag.html
+     *
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
+     */
+    public function tagAssociate(string $tagName, string $email): string
+    {
+        $params = [
+            'tagName' => $tagName,
+            'lead_email' => $email,
+        ];
+
+        $response = $this->newRequest()
+            ->get(sprintf('/tag/associate?%s', http_build_query($params)))
+            ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
+    }
+
+    /**
+     * Deassociate a tag from a contact.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/tag-management/deassociate-tag.html
+     *
+     * @return string Response message from the API.
+     *
+     * @throws ZohoApiException
+     * @throws ConnectionException
+     */
+    public function tagDeassociate(string $tagName, string $email): string
+    {
+        $params = [
+            'tagName' => $tagName,
+            'lead_email' => $email,
+        ];
+
+        $response = $this->newRequest()
+            ->get(sprintf('/tag/deassociate?%s', http_build_query($params)))
+            ->json();
+
+        if ($response['status'] === 'error') {
+            throw ZohoApiException::fromResponse($response);
+        }
+
+        return $response['message'] ?? '';
     }
 
     protected function newRequest(): PendingRequest
