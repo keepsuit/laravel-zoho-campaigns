@@ -117,3 +117,27 @@ it('can get list subscribers count', function (?string $list, string $expectedLi
     'list name' => ['subscribers', 'subscribers-list-key'],
     'list key' => ['custom-list-key', 'custom-list-key'],
 ]);
+
+it('can attach a tag to a subscriber', function () {
+    $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('tagAssociate')
+        ->with('TEST', 'test@example.com')
+        ->andReturn('Tag attached successfully');
+
+    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
+
+    $response = Campaigns::attachTag('test@example.com', 'TEST');
+    expect($response)->toBe('Tag attached successfully');
+});
+
+it('can detach a tag from a subscriber', function () {
+    $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('tagDeassociate')
+        ->with('TEST', 'test@example.com')
+        ->andReturn('Tag detached successfully');
+
+    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
+
+    $response = Campaigns::detachTag('test@example.com', 'TEST');
+    expect($response)->toBe('Tag detached successfully');
+});
