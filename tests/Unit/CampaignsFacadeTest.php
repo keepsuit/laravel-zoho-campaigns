@@ -74,7 +74,7 @@ it('can get list subscribers', function (?string $list, string $expectedListKey)
     'list key' => ['custom-list-key', 'custom-list-key'],
 ]);
 
-it('handle no contacts in the list error in list subscribers', function () {
+it('handle list subscribers end', function () {
     $campaignsApi = mock(ZohoCampaignsApi::class);
     $campaignsApi->shouldReceive('listSubscribersCount')
         ->with('subscribers-list-key', 'active')
@@ -85,7 +85,7 @@ it('handle no contacts in the list error in list subscribers', function () {
         ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(1, 20)));
     $campaignsApi->shouldReceive('listSubscribers')
         ->with('subscribers-list-key', 'active', 'asc', 21, 20)
-        ->andThrow(new ZohoCampaignsApiException('2502', 'Yet,There are no contacts in this list.'));
+        ->andReturn([]);
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 

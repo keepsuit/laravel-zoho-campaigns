@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
+use Keepsuit\Campaigns\Exceptions\TagNotFoundException;
 use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 
 /**
@@ -86,16 +87,7 @@ class Campaigns
             $fromIndex = 1;
 
             while (true) {
-                try {
-                    $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $chunkSize);
-                } catch (ZohoCampaignsApiException $exception) {
-                    // If there are no other subscribers the api will return error 2502 with message "Yet,There are no contacts in this list."
-                    if ($exception->getErrorId() === '2502') {
-                        break;
-                    }
-
-                    throw $exception;
-                }
+                $response = $this->zohoApi->listSubscribers($listKey, status: $status, sort: $sort, fromIndex: $fromIndex, range: $chunkSize);
 
                 foreach ($response as $subscriber) {
                     yield $subscriber;
@@ -150,15 +142,10 @@ class Campaigns
     {
         try {
             $this->zohoApi->tagAssociate($tag, $email);
-        } catch (ZohoCampaignsApiException $exception) {
-            // Tag not found
-            if ($exception->getErrorId() === '9001') {
-                $this->zohoApi->tagCreate($tag);
+        } catch (TagNotFoundException) {
+            $this->zohoApi->tagCreate($tag);
 
-                $this->zohoApi->tagAssociate($tag, $email);
-            }
-
-            throw $exception;
+            $this->zohoApi->tagAssociate($tag, $email);
         }
     }
 
@@ -172,13 +159,7 @@ class Campaigns
     {
         try {
             $this->zohoApi->tagDeassociate($tag, $email);
-        } catch (ZohoCampaignsApiException $exception) {
-            // Tag not found
-            if ($exception->getErrorId() === '9001') {
-                return;
-            }
-
-            throw $exception;
+        } catch (TagNotFoundException) {
         }
     }
 

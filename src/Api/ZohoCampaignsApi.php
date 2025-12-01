@@ -6,6 +6,8 @@ use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Keepsuit\Campaigns\Exceptions\ContactNotFoundException;
+use Keepsuit\Campaigns\Exceptions\TagNotFoundException;
 use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 
 /**
@@ -135,6 +137,11 @@ class ZohoCampaignsApi
             ->json();
 
         if (isset($response['status']) && $response['status'] === 'error') {
+            // If there are no other subscribers the api will return error 2502 with message "Yet,There are no contacts in this list."
+            if ($response['code'] === '2502') {
+                return [];
+            }
+
             throw ZohoCampaignsApiException::fromResponse($response);
         }
 
@@ -274,7 +281,11 @@ class ZohoCampaignsApi
             ->json();
 
         if (isset($response['status']) && $response['status'] === 'error') {
-            throw ZohoCampaignsApiException::fromResponse($response);
+            throw match ($response['code'] ?? '') {
+                '993' => ContactNotFoundException::fromResponse($response),
+                '9001' => TagNotFoundException::fromResponse($response),
+                default => ZohoCampaignsApiException::fromResponse($response)
+            };
         }
     }
 
@@ -299,7 +310,11 @@ class ZohoCampaignsApi
             ->json();
 
         if (isset($response['status']) && $response['status'] === 'error') {
-            throw ZohoCampaignsApiException::fromResponse($response);
+            throw match ($response['code'] ?? '') {
+                '993' => ContactNotFoundException::fromResponse($response),
+                '9001' => TagNotFoundException::fromResponse($response),
+                default => ZohoCampaignsApiException::fromResponse($response)
+            };
         }
     }
 

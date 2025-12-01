@@ -4,7 +4,7 @@ namespace Keepsuit\Campaigns\Exceptions;
 
 class ZohoApiException extends \Exception
 {
-    final public function __construct(
+    public function __construct(
         protected string $errorId,
         string $message,
     ) {
