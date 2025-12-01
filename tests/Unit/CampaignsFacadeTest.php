@@ -132,3 +132,22 @@ it('can detach a tag from a subscriber', function () {
 
     expect(fn () => Campaigns::detachTag('test@example.com', 'TEST'))->not->toThrow(ZohoCampaignsApiException::class);
 });
+
+test('contact fields', function () {
+    $campaignsApi = mock(ZohoCampaignsApi::class);
+    $campaignsApi->shouldReceive('contactFields')
+        ->andReturn([
+            [
+                'DISPLAY_NAME' => 'Contact Email',
+                'FIELD_NAME' => 'contact_email',
+                'IS_MANDATORY' => true,
+                'FIELD_ID' => 1127772000000000021,
+            ],
+        ]);
+
+    app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
+
+    $fields = Campaigns::contactFields();
+
+    expect($fields)->count()->toBe(1);
+});

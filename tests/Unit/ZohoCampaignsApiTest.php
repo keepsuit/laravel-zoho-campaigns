@@ -342,3 +342,43 @@ test('deassociate tag', function () {
 
     expect(fn () => $this->campaignsApi->tagDeassociate('TEST', 'test@example.com'))->not->toThrow(ZohoCampaignsApiException::class);
 });
+
+test('contact fields', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/contact/allfields*' => function (Request $request) {
+            expect($request->header('Authorization'))->toBe(['Zoho-oauthtoken access-token']);
+
+            return Http::response([
+                'response' => [
+                    'fieldnames' => [
+                        'fieldname' => [
+                            [
+                                'DISPLAY_NAME' => 'Contact Email',
+                                'FIELD_NAME' => 'contact_email',
+                                'IS_MANDATORY' => true,
+                                'FIELD_ID' => 1127772000000000021,
+                            ],
+                            [
+                                'DISPLAY_NAME' => 'First Name',
+                                'FIELD_NAME' => 'firstname',
+                                'IS_MANDATORY' => false,
+                                'FIELD_ID' => 1127772000000000023,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        },
+    ]);
+
+    $fields = $this->campaignsApi->contactFields();
+
+    expect($fields)
+        ->toHaveCount(2)
+        ->{0}->toBe([
+            'DISPLAY_NAME' => 'Contact Email',
+            'FIELD_NAME' => 'contact_email',
+            'IS_MANDATORY' => true,
+            'FIELD_ID' => 1127772000000000021,
+        ]);
+});

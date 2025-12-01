@@ -13,6 +13,7 @@ use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 /**
  * @phpstan-import-type ZohoCustomer from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
  * @phpstan-import-type ZohoTag from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
+ * @phpstan-import-type ZohoContactField from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
  */
 class Campaigns
 {
@@ -161,6 +162,14 @@ class Campaigns
             $this->zohoApi->tagDeassociate($tag, $email);
         } catch (TagNotFoundException) {
         }
+    }
+
+    /**
+     * @return Collection<array-key,ZohoContactField>
+     */
+    public function contactFields(): Collection
+    {
+        return Collection::make($this->zohoApi->contactFields());
     }
 
     protected function resolveListKey(?string $list = null): string

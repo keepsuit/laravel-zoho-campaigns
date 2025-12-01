@@ -29,6 +29,12 @@ use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
  *     is_crm_tag: string,
  *     zuid: string,
  * }
+ * @phpstan-type ZohoContactField array{
+ *     DISPLAY_NAME: string,
+ *     FIELD_NAME: string,
+ *     IS_MANDATORY: bool,
+ *     FIELD_ID: int,
+ * }
  */
 class ZohoCampaignsApi
 {
@@ -316,6 +322,20 @@ class ZohoCampaignsApi
                 default => ZohoCampaignsApiException::fromResponse($response)
             };
         }
+    }
+
+    /**
+     * @return array<array-key, ZohoContactField>
+     */
+    public function contactFields(): array
+    {
+        $response = $this->newRequest()
+            ->get(sprintf('/contact/allfields?%s', http_build_query([
+                'type' => 'json',
+            ])))
+            ->json();
+
+        return $response['response']['fieldnames']['fieldname'] ?? [];
     }
 
     protected function newRequest(): PendingRequest
