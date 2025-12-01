@@ -9,6 +9,7 @@ use Illuminate\Support\LazyCollection;
 /**
  * @phpstan-import-type ZohoCustomer from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
  * @phpstan-import-type ZohoTag from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
+ * @phpstan-import-type ZohoContactField from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
  *
  * @method static string subscribe(string $email, array $contactInfo = [], ?string $list = null)
  * @method static string resubscribe(string $email, array $contactInfo = [], ?string $list = null)
@@ -18,6 +19,7 @@ use Illuminate\Support\LazyCollection;
  * @method static Collection<array-key,ZohoTag> tags()
  * @method static string attachTag(string $email, string $tag)
  * @method static string detachTag(string $email, string $tag)
+ * @method static Collection<array-key,ZohoContactField> contactFields()
  *
  * @see \Keepsuit\Campaigns\Campaigns
  */
