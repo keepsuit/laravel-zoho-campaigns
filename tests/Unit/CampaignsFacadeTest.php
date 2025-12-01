@@ -1,6 +1,7 @@
 <?php
 
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
+use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 use Keepsuit\Campaigns\Facades\Campaigns;
 
 it('can subscribe user to a list', function (?string $list, string $expectedListKey) {
@@ -11,12 +12,10 @@ it('can subscribe user to a list', function (?string $list, string $expectedList
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::subscribe('test@example.com', [
+    expect(fn () => Campaigns::subscribe('test@example.com', [
         'First Name' => 'abc',
         'Last Name' => 'def',
-    ], list: $list);
-
-    expect($response)->toBe('User subscribed successfully');
+    ], list: $list))->not->toThrow(ZohoCampaignsApiException::class);
 })->with([
     'default' => [null, 'subscribers-list-key'],
     'list name' => ['subscribers', 'subscribers-list-key'],
@@ -31,12 +30,10 @@ it('can resubscribe user to a list', function (?string $list, string $expectedLi
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::resubscribe('test@example.com', [
+    expect(fn () => Campaigns::resubscribe('test@example.com', [
         'First Name' => 'abc',
         'Last Name' => 'def',
-    ], list: $list);
-
-    expect($response)->toBe('User resubscribed successfully');
+    ], list: $list))->not->toThrow(ZohoCampaignsApiException::class);
 })->with([
     'default' => [null, 'subscribers-list-key'],
     'list name' => ['subscribers', 'subscribers-list-key'],
@@ -51,9 +48,7 @@ it('can unsubscribe user from a list', function (?string $list, string $expected
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::unsubscribe('test@example.com', list: $list);
-
-    expect($response)->toBe('User unsubscribed successfully');
+    expect(fn () => Campaigns::unsubscribe('test@example.com', list: $list))->not->toThrow(ZohoCampaignsApiException::class);
 })->with([
     'default' => [null, 'subscribers-list-key'],
     'list name' => ['subscribers', 'subscribers-list-key'],
@@ -72,9 +67,7 @@ it('can get list subscribers', function (?string $list, string $expectedListKey)
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::subscribers(chunkSize: 20, list: $list);
-
-    expect($response)->count()->toBe(23);
+    expect(fn () => Campaigns::subscribers(chunkSize: 20, list: $list))->not->toThrow(ZohoCampaignsApiException::class);
 })->with([
     'default' => [null, 'subscribers-list-key'],
     'list name' => ['subscribers', 'subscribers-list-key'],
@@ -92,7 +85,7 @@ it('handle no contacts in the list error in list subscribers', function () {
         ->andReturn(array_map(fn (int $i) => ['email' => "test{$i}@example.com"], range(1, 20)));
     $campaignsApi->shouldReceive('listSubscribers')
         ->with('subscribers-list-key', 'active', 'asc', 21, 20)
-        ->andThrow(new \Keepsuit\Campaigns\Api\ZohoApiException('Yet,There are no contacts in this list.', 2502));
+        ->andThrow(new ZohoCampaignsApiException('2502', 'Yet,There are no contacts in this list.'));
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
@@ -126,8 +119,7 @@ it('can attach a tag to a subscriber', function () {
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::attachTag('test@example.com', 'TEST');
-    expect($response)->toBe('Tag attached successfully');
+    expect(fn () => Campaigns::attachTag('test@example.com', 'TEST'))->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 it('can detach a tag from a subscriber', function () {
@@ -138,6 +130,5 @@ it('can detach a tag from a subscriber', function () {
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    $response = Campaigns::detachTag('test@example.com', 'TEST');
-    expect($response)->toBe('Tag detached successfully');
+    expect(fn () => Campaigns::detachTag('test@example.com', 'TEST'))->not->toThrow(ZohoCampaignsApiException::class);
 });

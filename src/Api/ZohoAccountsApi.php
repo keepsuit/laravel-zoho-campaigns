@@ -2,7 +2,7 @@
 
 namespace Keepsuit\Campaigns\Api;
 
-use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Support\Facades\Http;
 use Keepsuit\Campaigns\Exceptions\ZohoAccountsApiException;
 
@@ -24,7 +24,7 @@ class ZohoAccountsApi
      * }
      *
      * @throws ZohoAccountsApiException
-     * @throws RequestException
+     * @throws HttpClientException
      */
     public function generateAccessToken(string $authorizationCode): array
     {
@@ -58,6 +58,9 @@ class ZohoAccountsApi
      *     token_type: string,
      *     expires_in: int,
      * }
+     *
+     * @throws ZohoAccountsApiException
+     * @throws HttpClientException
      */
     public function refreshAccessToken(string $refreshToken): array
     {

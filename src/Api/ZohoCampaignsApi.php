@@ -2,10 +2,11 @@
 
 namespace Keepsuit\Campaigns\Api;
 
-use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 
 /**
  * @phpstan-type ZohoCustomer array{
@@ -43,12 +44,11 @@ class ZohoCampaignsApi
      * @param  string  $email  The email address to subscribe.
      * @param  array  $contactInfo  Additional contact information to subscribe.
      * @param  array  $additionalParams  Additional parameters to pass to the API.
-     * @return string Response message from the API.
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function listSubscribe(string $listKey, string $email, array $contactInfo = [], array $additionalParams = []): string
+    public function listSubscribe(string $listKey, string $email, array $contactInfo = [], array $additionalParams = []): void
     {
         $params = array_merge([
             'listkey' => $listKey,
@@ -62,11 +62,9 @@ class ZohoCampaignsApi
             ->post(sprintf('/json/listsubscribe?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     /**
@@ -77,12 +75,11 @@ class ZohoCampaignsApi
      * @param  string  $listKey  The list key.
      * @param  string  $email  The email address to unsubscribe.
      * @param  array  $additionalParams  Additional parameters to pass to the API.
-     * @return string Response message from the API.
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function listUnsubscribe(string $listKey, string $email, array $additionalParams = []): string
+    public function listUnsubscribe(string $listKey, string $email, array $additionalParams = []): void
     {
         $params = array_merge([
             'listkey' => $listKey,
@@ -96,11 +93,9 @@ class ZohoCampaignsApi
             ->post(sprintf('/json/listunsubscribe?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     /**
@@ -115,8 +110,8 @@ class ZohoCampaignsApi
      * @param  int  $range  The range of results to retrieve. Default is 25.
      * @return array<array-key, ZohoCustomer> The list of subscribers.
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
     public function listSubscribers(
         string $listKey,
@@ -139,8 +134,8 @@ class ZohoCampaignsApi
             ->get(sprintf('/getlistsubscribers?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
 
         return $response['list_of_details'] ?? [];
@@ -155,8 +150,8 @@ class ZohoCampaignsApi
      * @param  string  $status  The status of the subscribers to retrieve. Possible values are 'active', 'unsub', 'bounce' and 'spam'. Default is 'active'
      * @return int The count of subscribers.
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
     public function listSubscribersCount(
         string $listKey,
@@ -173,8 +168,8 @@ class ZohoCampaignsApi
             ->get(sprintf('/listsubscriberscount?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
 
         return $response['no_of_contacts'] ?? 0;
@@ -189,12 +184,11 @@ class ZohoCampaignsApi
      *     tagDesc?: string,
      *     color?: string,
      * }  $additionalParams
-     * @return string Response message from the API.
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function tagCreate(string $tagName, array $additionalParams = []): string
+    public function tagCreate(string $tagName, array $additionalParams = []): void
     {
         $params = array_merge([
             'resfmt' => 'JSON',
@@ -205,11 +199,9 @@ class ZohoCampaignsApi
             ->get(sprintf('/tag/add?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     /**
@@ -217,12 +209,10 @@ class ZohoCampaignsApi
      *
      * @link https://www.zoho.com/campaigns/help/developers/tag-management/delete-tag.html
      *
-     * @return string Response message from the API.
-     *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function tagDelete(string $tagName): string
+    public function tagDelete(string $tagName): void
     {
         $response = $this->newRequest()
             ->get(sprintf('/tag/delete?%s', http_build_query([
@@ -231,11 +221,9 @@ class ZohoCampaignsApi
             ])))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     /**
@@ -245,8 +233,8 @@ class ZohoCampaignsApi
      *
      * @return array<array-key, ZohoTag>
      *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
     public function tags(): array
     {
@@ -257,7 +245,7 @@ class ZohoCampaignsApi
             ->json();
 
         if (isset($response['status']) && $response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
 
         return Collection::make($response['tags'] ?? [])
@@ -270,12 +258,10 @@ class ZohoCampaignsApi
      *
      * @link https://www.zoho.com/campaigns/help/developers/tag-management/associate-tag.html
      *
-     * @return string Response message from the API.
-     *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function tagAssociate(string $tagName, string $email): string
+    public function tagAssociate(string $tagName, string $email): void
     {
         $params = [
             'resfmt' => 'JSON',
@@ -287,11 +273,9 @@ class ZohoCampaignsApi
             ->get(sprintf('/tag/associate?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     /**
@@ -299,12 +283,10 @@ class ZohoCampaignsApi
      *
      * @link https://www.zoho.com/campaigns/help/developers/tag-management/deassociate-tag.html
      *
-     * @return string Response message from the API.
-     *
-     * @throws ZohoApiException
-     * @throws ConnectionException
+     * @throws ZohoCampaignsApiException
+     * @throws HttpClientException
      */
-    public function tagDeassociate(string $tagName, string $email): string
+    public function tagDeassociate(string $tagName, string $email): void
     {
         $params = [
             'resfmt' => 'JSON',
@@ -316,11 +298,9 @@ class ZohoCampaignsApi
             ->get(sprintf('/tag/deassociate?%s', http_build_query($params)))
             ->json();
 
-        if ($response['status'] === 'error') {
-            throw ZohoApiException::fromResponse($response);
+        if (isset($response['status']) && $response['status'] === 'error') {
+            throw ZohoCampaignsApiException::fromResponse($response);
         }
-
-        return $response['message'] ?? '';
     }
 
     protected function newRequest(): PendingRequest
