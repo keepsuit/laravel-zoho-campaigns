@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## v1.1.0 - 2025-12-01
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/keepsuit/laravel-zoho-campaigns/pull/31
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/keepsuit/laravel-zoho-campaigns/pull/32
+* Bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/keepsuit/laravel-zoho-campaigns/pull/33
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/keepsuit/laravel-zoho-campaigns/pull/35
+* Tags by @cappuc in https://github.com/keepsuit/laravel-zoho-campaigns/pull/34
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/1.0.0...1.1.0
+
 ## v1.0.0 - 2025-08-02
 
 ### What's Changed
