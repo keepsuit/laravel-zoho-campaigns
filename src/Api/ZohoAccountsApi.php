@@ -2,7 +2,9 @@
 
 namespace Keepsuit\Campaigns\Api;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Keepsuit\Campaigns\Exceptions\ZohoAccountsApiException;
 
 class ZohoAccountsApi
 {
@@ -20,6 +22,9 @@ class ZohoAccountsApi
      *     token_type: string,
      *     expires_in: int,
      * }
+     *
+     * @throws ZohoAccountsApiException
+     * @throws RequestException
      */
     public function generateAccessToken(string $authorizationCode): array
     {
@@ -30,8 +35,20 @@ class ZohoAccountsApi
             'code' => $authorizationCode,
         ]);
 
-        return Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+        $response = Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+            ->throw()
             ->json();
+
+        if (isset($response['error'])) {
+            throw match ($response['error']) {
+                'invalid_client' => ZohoAccountsApiException::invalidClient(),
+                'invalid_client_secret' => ZohoAccountsApiException::invalidClientSecret(),
+                'invalid_code' => ZohoAccountsApiException::invalidCode(),
+                default => new ZohoAccountsApiException($response['error'], 'An error occurred while generating access token'),
+            };
+        }
+
+        return $response;
     }
 
     /**
@@ -51,8 +68,20 @@ class ZohoAccountsApi
             'refresh_token' => $refreshToken,
         ]);
 
-        return Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+        $response = Http::post(sprintf('%s/token?%s', $this->endpoint(), $params))
+            ->throw()
             ->json();
+
+        if (isset($response['error'])) {
+            throw match ($response['error']) {
+                'invalid_client' => ZohoAccountsApiException::invalidClient(),
+                'invalid_client_secret' => ZohoAccountsApiException::invalidClientSecret(),
+                'invalid_code' => ZohoAccountsApiException::invalidCode(),
+                default => new ZohoAccountsApiException($response['error'], 'An error occurred while generating access token'),
+            };
+        }
+
+        return $response;
     }
 
     protected function endpoint(): string
