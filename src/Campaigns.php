@@ -11,6 +11,7 @@ use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 
 /**
  * @phpstan-import-type ZohoCustomer from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
+ * @phpstan-import-type ZohoTag from \Keepsuit\Campaigns\Api\ZohoCampaignsApi
  */
 class Campaigns
 {
@@ -124,6 +125,61 @@ class Campaigns
         $listKey = $this->resolveListKey($list);
 
         return $this->zohoApi->listSubscribersCount($listKey, $status);
+    }
+
+    /**
+     * Retrieve all existing tags.
+     *
+     * @return Collection<array-key,ZohoTag>
+     *
+     * @throws ConnectionException
+     * @throws ZohoApiException
+     */
+    public function tags(): Collection
+    {
+        return Collection::make($this->zohoApi->tags());
+    }
+
+    /**
+     * Attach a tag to a contact.
+     *
+     * @throws ConnectionException
+     * @throws ZohoApiException
+     */
+    public function attachTag(string $email, string $tag): string
+    {
+        try {
+            return $this->zohoApi->tagAssociate($tag, $email);
+        } catch (ZohoApiException $exception) {
+            // Tag not found
+            if ($exception->getCode() === 9001) {
+                $this->zohoApi->tagCreate($tag);
+
+                return $this->zohoApi->tagAssociate($tag, $email);
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Detach a tag from a contact.
+     *
+     * @throws ConnectionException
+     * @throws ZohoApiException
+     */
+    public function detachTag(string $email, string $tag): string
+    {
+        try {
+            return $this->zohoApi->tagDeassociate($tag, $email);
+        } catch (ZohoApiException $exception) {
+            // Tag not found
+            if ($exception->getCode() === 9001) {
+                return $exception->getMessage();
+            }
+
+            throw $exception;
+        }
     }
 
     protected function resolveListKey(?string $list = null): string
