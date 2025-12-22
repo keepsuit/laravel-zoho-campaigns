@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-zoho-campaigns` will be documented in this file.
 
+## 2.0.0 - 2025-12-22
+
+### Breaking changes
+
+The API's error handling has been redesigned. Some errors now have specific exception classes that allow for improved exception handling.
+
+### What's Changed
+
+* Exceptions by @cappuc in https://github.com/keepsuit/laravel-zoho-campaigns/pull/36
+
+**Full Changelog**: https://github.com/keepsuit/laravel-zoho-campaigns/compare/1.1.0...2.0.0
+
 ## v1.1.0 - 2025-12-01
 
 ### What's Changed
