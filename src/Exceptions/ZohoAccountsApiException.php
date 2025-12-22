@@ -16,7 +16,7 @@ class ZohoAccountsApiException extends ZohoApiException
     {
         return new ZohoAccountsApiException(
             'invalid_client_secret',
-            'clint_secret parameter is missing or invalid'
+            'client_secret parameter is missing or invalid'
         );
     }
 

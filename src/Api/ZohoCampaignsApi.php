@@ -325,7 +325,13 @@ class ZohoCampaignsApi
     }
 
     /**
+     * Get all contact fields.
+     *
+     * @link https://www.zoho.com/campaigns/help/developers/get-contact-fields.html
+     *
      * @return array<array-key, ZohoContactField>
+     *
+     * @throws HttpClientException
      */
     public function contactFields(): array
     {

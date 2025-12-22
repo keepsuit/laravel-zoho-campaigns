@@ -80,7 +80,7 @@ class ZohoAccountsApi
                 'invalid_client' => ZohoAccountsApiException::invalidClient(),
                 'invalid_client_secret' => ZohoAccountsApiException::invalidClientSecret(),
                 'invalid_code' => ZohoAccountsApiException::invalidCode(),
-                default => new ZohoAccountsApiException($response['error'], 'An error occurred while generating access token'),
+                default => new ZohoAccountsApiException($response['error'], 'An error occurred while refreshing access token'),
             };
         }
 

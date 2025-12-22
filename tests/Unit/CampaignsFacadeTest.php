@@ -67,7 +67,7 @@ it('can get list subscribers', function (?string $list, string $expectedListKey)
 
     app()->bind(ZohoCampaignsApi::class, fn () => $campaignsApi);
 
-    expect(fn () => Campaigns::subscribers(chunkSize: 20, list: $list))->not->toThrow(ZohoCampaignsApiException::class);
+    expect(Campaigns::subscribers(chunkSize: 20, list: $list))->toHaveCount(23);
 })->with([
     'default' => [null, 'subscribers-list-key'],
     'list name' => ['subscribers', 'subscribers-list-key'],

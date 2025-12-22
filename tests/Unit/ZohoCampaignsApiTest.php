@@ -163,7 +163,7 @@ test('get list subscribers error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listSubscribers('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2501);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getErrorId() === '2501');
 });
 
 test('get list subscribers count', function () {
@@ -205,7 +205,7 @@ test('get list subscribers count error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listSubscribersCount('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2202);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getErrorId() === '2202');
 
 });
 
