@@ -165,7 +165,11 @@ class Campaigns
     }
 
     /**
+     * Get all contact fields.
+     *
      * @return Collection<array-key,ZohoContactField>
+     *
+     * @throws HttpClientException
      */
     public function contactFields(): Collection
     {
