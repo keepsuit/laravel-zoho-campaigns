@@ -3,9 +3,9 @@
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Keepsuit\Campaigns\Api\ZohoAccessToken;
-use Keepsuit\Campaigns\Api\ZohoApiException;
 use Keepsuit\Campaigns\Api\ZohoCampaignsApi;
 use Keepsuit\Campaigns\Api\ZohoRegion;
+use Keepsuit\Campaigns\Exceptions\ZohoCampaignsApiException;
 
 beforeEach(function () {
     $accessToken = mock(ZohoAccessToken::class);
@@ -38,13 +38,10 @@ test('list subscribe', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->listSubscribe('list-12345', 'john@example.com', [
+    expect(fn () => $this->campaignsApi->listSubscribe('list-12345', 'john@example.com', [
         'First Name' => 'John',
         'Last Name' => 'Doe',
-    ]);
-
-    expect($response)
-        ->toBe('A confirmation email has been sent to the user.');
+    ]))->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 test('list subscribe error', function () {
@@ -59,7 +56,7 @@ test('list subscribe error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listSubscribe('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Invalid contact email address.' && $exception->getCode() === 2004);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Invalid contact email address.' && $exception->getErrorId() === '2004');
 });
 
 test('list unsubscribe', function () {
@@ -84,10 +81,8 @@ test('list unsubscribe', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->listUnsubscribe('list-12345', 'john@example.com');
-
-    expect($response)
-        ->toBe('User successfully unsubscribed.');
+    expect(fn () => $this->campaignsApi->listUnsubscribe('list-12345', 'john@example.com'))
+        ->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 test('list unsubscribe error', function () {
@@ -102,7 +97,7 @@ test('list unsubscribe error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listUnsubscribe('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Please retry after sometime.' && $exception->getCode() === 2101);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Please retry after sometime.' && $exception->getErrorId() === '2101');
 });
 
 test('get list subscribers', function () {
@@ -168,7 +163,7 @@ test('get list subscribers error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listSubscribers('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2501);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getErrorId() === '2501');
 });
 
 test('get list subscribers count', function () {
@@ -210,7 +205,7 @@ test('get list subscribers count error', function () {
     ]);
 
     expect(fn () => $this->campaignsApi->listSubscribersCount('list-12345', 'john@example.com'))
-        ->toThrow(fn (ZohoApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getCode() === 2202);
+        ->toThrow(fn (ZohoCampaignsApiException $exception) => $exception->getMessage() === 'Listkey is empty or invalid.' && $exception->getErrorId() === '2202');
 
 });
 
@@ -234,12 +229,9 @@ test('create tag', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->tagCreate('TEST', [
+    expect(fn () => $this->campaignsApi->tagCreate('TEST', [
         'color' => '#FF0000',
-    ]);
-
-    expect($response)
-        ->toBe('Tag associated successfully');
+    ]))->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 test('delete tag', function () {
@@ -261,10 +253,7 @@ test('delete tag', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->tagDelete('TEST');
-
-    expect($response)
-        ->toBe('Tag deleted successfully');
+    expect(fn () => $this->campaignsApi->tagDelete('TEST'))->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 test('get tags', function () {
@@ -328,10 +317,7 @@ test('associate tag', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->tagAssociate('TEST', 'test@example.com');
-
-    expect($response)
-        ->toBe('Tag associated successfully');
+    expect(fn () => $this->campaignsApi->tagAssociate('TEST', 'test@example.com'))->not->toThrow(ZohoCampaignsApiException::class);
 });
 
 test('deassociate tag', function () {
@@ -354,8 +340,45 @@ test('deassociate tag', function () {
         },
     ]);
 
-    $response = $this->campaignsApi->tagDeassociate('TEST', 'test@example.com');
+    expect(fn () => $this->campaignsApi->tagDeassociate('TEST', 'test@example.com'))->not->toThrow(ZohoCampaignsApiException::class);
+});
 
-    expect($response)
-        ->toBe('Tag deassociated successfully');
+test('contact fields', function () {
+    Http::fake([
+        'campaigns.zoho.eu/api/v1.1/contact/allfields*' => function (Request $request) {
+            expect($request->header('Authorization'))->toBe(['Zoho-oauthtoken access-token']);
+
+            return Http::response([
+                'response' => [
+                    'fieldnames' => [
+                        'fieldname' => [
+                            [
+                                'DISPLAY_NAME' => 'Contact Email',
+                                'FIELD_NAME' => 'contact_email',
+                                'IS_MANDATORY' => true,
+                                'FIELD_ID' => 1127772000000000021,
+                            ],
+                            [
+                                'DISPLAY_NAME' => 'First Name',
+                                'FIELD_NAME' => 'firstname',
+                                'IS_MANDATORY' => false,
+                                'FIELD_ID' => 1127772000000000023,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        },
+    ]);
+
+    $fields = $this->campaignsApi->contactFields();
+
+    expect($fields)
+        ->toHaveCount(2)
+        ->{0}->toBe([
+            'DISPLAY_NAME' => 'Contact Email',
+            'FIELD_NAME' => 'contact_email',
+            'IS_MANDATORY' => true,
+            'FIELD_ID' => 1127772000000000021,
+        ]);
 });
