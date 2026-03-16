@@ -9,7 +9,7 @@ it('can construct null driver', function () {
 
     $driver = app(Campaigns::class);
 
-    expect($driver)->toBeInstanceOf(Keepsuit\Campaigns\NullDriver::class);
+    expect($driver)->toBeInstanceOf(NullDriver::class);
 });
 
 it('can call any method on null driver', function () {
